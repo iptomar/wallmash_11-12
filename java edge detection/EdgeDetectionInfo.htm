@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+<TITLE>EDGE DETECTION JAVA APPLET</TITLE>
+</HEAD>
+<BODY>
+<b>
+<font face="Verdana" size="5" color="#000080">EDGE DETECTION</font>
+</b>
+<p>
+<font face="Verdana">
+<APPLET CODE="EdgeDetection.class" WIDTH=640 HEIGHT=525>
+<PARAM NAME = "sample1" 	VALUE = "sample1.jpg">
+<PARAM NAME = "sample2" 	VALUE = "sample2.jpg">
+<PARAM NAME = "orchid"  	VALUE = "orchid.jpg">
+<PARAM NAME = "shapes"  	VALUE = "shapes.jpg">
+<PARAM NAME = "yosemite" 	VALUE = "yosemite.jpg">
+<PARAM NAME = "snow" 		VALUE = "snow.jpg">
+</APPLET>
+</font>
+</p>
+<p><font face="Verdana" size="3">
+ This applet compares several common edge detection algorithms and techniques,
+including Roberts Cross Operator, Prewitt Edge Detection Operator, and Sobel
+Edge Detection Operator.&nbsp; It also utilizes Gaussian Blur, Non-maximum
+Suppression, and Thresholding techniques.&nbsp; The user can select from a
+variety of files, and can also enter the path of a local file on the hard drive.&nbsp;
+Note: The Custom filename, and the Non-maximum Suppression may be inoperational.</font></p>
+<p><b><font color="#000080" size="4" face="Verdana">BACKGROUND</font></b></p>
+<p><font size="3" face="Verdana">The simplest Edge Detection methods rely on
+finding the first order differences between adjacent pixels.&nbsp; The most
+obvious way to implement this, is to find the x-change and y-change, and
+consolidate this information (as represented by the Simple algorithm).&nbsp; <i>Robert's
+Cross Operator</i> is more successful in that it takes both diagonals to
+calculate edges.&nbsp; Since edge detection is essentially the same as differentiating
+a function, the <i>Prewitt Edge Detection Operator</i> takes the gradient vector
+of a 3x3 area, with areas having a larger gradient vector being defined as
+&quot;edges&quot;.&nbsp; <i>Sobel Edge Detection Operator</i> is very similar to
+Prewitt Edge Detection Operator, except that it takes into account the Gaussian
+Distribution to better define edges.</font></p>
+<p><font size="3" face="Verdana">There are other ways to decrease erroneous
+pixels and enhance the clarity of edges.&nbsp; <i>Gaussian Blur</i> is the first
+step.&nbsp; This smoothes pixels and decreases the number of erroneous
+results.&nbsp; <i>Mon-Maximum Suppression</i> essentially finds the maximum
+value of each &quot;line&quot;, and deletes the pixels that are not part of the
+maximum &quot;line&quot;.&nbsp; This cleans up the image for a clearer
+edge.&nbsp; Lastly, <i>Thresholding</i> removes the pixels that are less than a
+certain value.&nbsp; This removes unwanted pixels, softer edges, and erroneous
+results.</font></p>
+<p><b><font size="4" color="#000080" face="Verdana">IMPLEMENTATION</font></b></p>
+<p><font size="3" face="Verdana">The edge detection operators can be represented
+as a &quot;template&quot;, which simplifies the calculations in the java
+applet.&nbsp; For example, the simplest operator has the template:</font></p>
+<table border="1" width="16%">
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">2</font></td>
+    <td width="50%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">-1</font></td>
+    <td width="50%" align="center"><font face="Verdana">0</font></td>
+  </tr>
+</table>
+<p><font size="3" face="Verdana">This means: <i>pixel(i,j) = 2*pixel(i,j) -
+pixel(i,j+1) - pixel(i+1,j).</i></font></p>
+<p><font face="Verdana">Other Edge Detection Operators have templates for both
+the x and y components.</font></p>
+<p><font face="Verdana" color="#000080"><b>Roberts Cross Operator:</b></font></p>
+<p><font face="Verdana">Template 1:</font></p>
+<table border="1" width="16%">
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">1</font></td>
+    <td width="50%" align="center"><font face="Verdana">0</font></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">0</font></td>
+    <td width="50%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+</table>
+<p><font face="Verdana">Template 2:</font></p>
+<table border="1" width="16%">
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">0</font></td>
+    <td width="50%" align="center"><font face="Verdana">1</font></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><font face="Verdana">-1</font></td>
+    <td width="50%" align="center"><font face="Verdana">0</font></td>
+  </tr>
+</table>
+<p><font face="Verdana"><i>&nbsp;pixel(i,j) = maximum(template 1, template 2)</i></font></p>
+<p><font face="Verdana" color="#000080"><b>Prewitt Operator:</b></font></p>
+<p><font face="Verdana">X-axis Template:</font></p>
+<table border="1" width="24%">
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+</table>
+<p><font face="Verdana">Y-axis Template:</font></p>
+<table border="1" width="24%">
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="34%" align="center"><font face="Verdana">1</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">0</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">-1</font></td>
+    <td width="33%" align="center"><font face="Verdana">-1</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+</table>
+<p><font face="Verdana"><i>pixel(i,j) = sqrt((x-axis template)^2 + (y-axis
+template)^2)</i></font></p>
+<p><font face="Verdana" color="#000080"><b>Sobel Operator:</b></font></p>
+<p><font face="Verdana">X-axis Template:</font></p>
+<table border="1" width="24%">
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">2</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-2</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+</table>
+<p><font face="Verdana">Y-axis Template:</font></p>
+<table border="1" width="24%">
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">1</font></td>
+    <td width="33%" align="center"><font face="Verdana">2</font></td>
+    <td width="34%" align="center"><font face="Verdana">1</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="33%" align="center"><font face="Verdana">0</font></td>
+    <td width="34%" align="center"><font face="Verdana">0</font></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><font face="Verdana">-1</font></td>
+    <td width="33%" align="center"><font face="Verdana">-2</font></td>
+    <td width="34%" align="center"><font face="Verdana">-1</font></td>
+  </tr>
+</table>
+<p><font face="Verdana"><i>pixel(i,j) = sqrt((x-axis template)^2 + (y-axis
+template)^2)</i></font></p>
+<p><font face="Verdana">For information about extraction and processing of
+images using java, see the Color Compare applet. </font></p>
+<p><b><font face="Verdana" size="4" color="#000080">SOURCES</font></b></p>
+<p><font face="Verdana" size="3">Naughton, Patrick and Herbert Schildt.&nbsp; <i>Java2:
+The Complete Reference</i>.&nbsp; Third Edition. Berkeley, CA: Mc-Graw-Hill,
+1999.&nbsp; </font></p>
+<p><font face="Verdana" size="3">Nixon, Mark and Alberto Aguado.&nbsp; <i>Feature
+Extraction and Image Processing</i>.&nbsp; Oxford: Newnes, 2002</font></p>
+<p><font size="1" face="Verdana">Note: Some of the code has been copied from
+these sources</font></p>
+<p>&nbsp;</p>
+</BODY>
+</HTML>
