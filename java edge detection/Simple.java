@@ -90,8 +90,7 @@ public class Simple{
 		int finalmatrix[][] = new int[height][width];
 		for(int r = 0; r < height - 1; r++){
 			for(int c = 0; c < width - 1; c++){
-				  finalmatrix[r][c] = 2*colormatrix[r][c]-colormatrix[r][c+1]-
-				  colormatrix[r+1][c];
+				  finalmatrix[r][c] = 2*colormatrix[r][c]-colormatrix[r][c+1]-colormatrix[r+1][c];
 				int k = Math.abs(finalmatrix[r][c]);//(Math.abs(finalmatrix[r][c] %255)) & 0xff;
 				//convert back to array
 				int newrgb = (0xff000000 | (k << 16) | (k << 8) | k);
