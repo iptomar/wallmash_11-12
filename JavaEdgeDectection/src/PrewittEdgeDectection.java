@@ -5,7 +5,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 
-public class SobelEdgeDetector {
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author Goncalo
+ */
+public class PrewittEdgeDectection {
 
     private BufferedImage sourceImage;
     private BufferedImage edgesImage;
@@ -13,7 +21,7 @@ public class SobelEdgeDetector {
     private int width;
     private int[] array3x3;
 
-    public SobelEdgeDetector() {
+    public PrewittEdgeDectection() {
         array3x3 = new int[9];
     }
 
@@ -56,18 +64,18 @@ public class SobelEdgeDetector {
         int processedpixels[] = new int[width * height];
         for (int r = 1; r < height - 1; r++) {
             for (int c = 1; c < width - 1; c++) {
-                int Gx = array3x3[0] * colormatrix[r - 1][c - 1]
-                        + array3x3[3] * colormatrix[r][c - 1]
-                        + array3x3[6] * colormatrix[r + 1][c - 1]
-                        + array3x3[5] * colormatrix[r - 1][c - 1]
-                        + array3x3[2] * colormatrix[r][c]
-                        + array3x3[8] * colormatrix[r + 1][c + 1];
-                int Gy = array3x3[0] * colormatrix[r - 1][c - 1]
-                        + array3x3[3] * colormatrix[r - 1][c]
-                        + array3x3[6] * colormatrix[r - 1][c + 1]
-                        + array3x3[2] * colormatrix[r + 1][c - 1]
-                        + array3x3[5] * colormatrix[r + 1][c]
-                        + array3x3[8] * colormatrix[r + 1][c + 1];
+                int Gx = colormatrix[r - 1][c - 1]
+                        + colormatrix[r][c - 1]
+                        + colormatrix[r + 1][c - 1]
+                        - colormatrix[r - 1][c - 1]
+                        - colormatrix[r][c]
+                        - colormatrix[r + 1][c + 1];
+                int Gy = colormatrix[r - 1][c - 1]
+                        + colormatrix[r - 1][c]
+                        + colormatrix[r - 1][c + 1]
+                        - colormatrix[r + 1][c - 1]
+                        - colormatrix[r + 1][c]
+                        - colormatrix[r + 1][c + 1];
                 G[r][c] = (int) Math.sqrt(Gx * Gx + Gy * Gy);
                 int k = G[r][c];
                 //convert back to array
@@ -83,12 +91,5 @@ public class SobelEdgeDetector {
 
     public BufferedImage getedgesImage() {
         return edgesImage;
-    }
-
-    /**
-     * @param array3x3 the array3x3 to set
-     */
-    public void setArray3x3(int[] array3x3) {
-        this.array3x3 = array3x3;
     }
 }

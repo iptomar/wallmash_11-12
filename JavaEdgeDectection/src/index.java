@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -29,6 +30,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class index extends javax.swing.JFrame {
 
+    private File Fileimg;
+    private BufferedImage imagemOriginal;
     private BufferedImage imagemPanel;
 
     /** Creates new form index */
@@ -41,6 +44,17 @@ public class index extends javax.swing.JFrame {
         try {
             //create the detector
             SobelEdgeDetector detector = new SobelEdgeDetector();
+            int[] array3x3 = new int[9];
+            array3x3[0] = Integer.parseInt(txt1.getText());
+            array3x3[1] = Integer.parseInt(txt2.getText());
+            array3x3[2] = Integer.parseInt(txt3.getText());
+            array3x3[3] = Integer.parseInt(txt4.getText());
+            array3x3[4] = Integer.parseInt(txt5.getText());
+            array3x3[5] = Integer.parseInt(txt6.getText());
+            array3x3[6] = Integer.parseInt(txt7.getText());
+            array3x3[7] = Integer.parseInt(txt8.getText());
+            array3x3[8] = Integer.parseInt(txt9.getText());
+            detector.setArray3x3(array3x3);
             //apply it to an image
             detector.setSourceImage(img);
             detector.process();
@@ -73,20 +87,44 @@ public class index extends javax.swing.JFrame {
         return edges;
     }
 
-    private void insertImage(String img, JPanel jpanel) {
+    private BufferedImage callRoberts(BufferedImage img) {
+        BufferedImage edges = null;
         try {
-            BufferedImage myPicture = ImageIO.read(new File(img));
-            Graphics g = jpanel.getGraphics();
-            g.drawImage(myPicture, 0, 0, jpanel.getWidth(), jpanel.getHeight(), jpanel);
+            //create the detector
+            RobertsEdgeDectector detector = new RobertsEdgeDectector();
+            //apply it to an image
+            detector.setSourceImage(img);
+            detector.process();
+            edges = detector.getedgesImage();
+            imagemPanel = edges;
+            ImageIO.write(edges, "PNG", new File("RobertsEdge.png"));
         } catch (Exception ex) {
+            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return edges;
+    }
+
+    private BufferedImage callPrewitt(BufferedImage img) {
+        BufferedImage edges = null;
+        try {
+            //create the detector
+            PrewittEdgeDectection detector = new PrewittEdgeDectection();
+            //apply it to an image
+            detector.setSourceImage(img);
+            detector.process();
+            edges = detector.getedgesImage();
+            imagemPanel = edges;
+            ImageIO.write(edges, "PNG", new File("PrewittEdge.png"));
+        } catch (Exception ex) {
+            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return edges;
     }
 
     private void insertImage(BufferedImage img, JPanel jpanel) {
         try {
-            BufferedImage myPicture = img;
             Graphics g = jpanel.getGraphics();
-            g.drawImage(myPicture, 0, 0, jpanel.getWidth(), jpanel.getHeight(), jpanel);
+            g.drawImage(img, 0, 0, jpanel.getWidth(), jpanel.getHeight(), jpanel);
         } catch (Exception ex) {
         }
     }
@@ -118,11 +156,14 @@ public class index extends javax.swing.JFrame {
         txt6 = new javax.swing.JTextField();
         txt9 = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
+        btCombine = new javax.swing.JButton();
+        btRoberts = new javax.swing.JButton();
+        btPrewitt = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pImagem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pImagem.setLayout(new java.awt.GridLayout());
+        pImagem.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Menu"));
 
@@ -153,6 +194,24 @@ public class index extends javax.swing.JFrame {
                 btSobelActionPerformed(evt);
             }
         });
+
+        txt1.setText("1");
+
+        txt4.setText("2");
+
+        txt7.setText("1");
+
+        txt8.setText("0");
+
+        txt5.setText("0");
+
+        txt2.setText("0");
+
+        txt3.setText("-1");
+
+        txt6.setText("-2");
+
+        txt9.setText("-1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -194,6 +253,27 @@ public class index extends javax.swing.JFrame {
                     .addComponent(txt9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
+        btCombine.setText("jButton1");
+        btCombine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCombineActionPerformed(evt);
+            }
+        });
+
+        btRoberts.setText("Roberts");
+        btRoberts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRobertsActionPerformed(evt);
+            }
+        });
+
+        btPrewitt.setText("Prewitt");
+        btPrewitt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btPrewittActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -206,8 +286,11 @@ public class index extends javax.swing.JFrame {
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                     .addComponent(btCanny, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                     .addComponent(btSobel, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                    .addComponent(btRoberts, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(btCombine, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(btPrewitt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -222,11 +305,17 @@ public class index extends javax.swing.JFrame {
                 .addComponent(btCanny)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btSobel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRoberts)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btPrewitt)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addComponent(btCombine)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -257,7 +346,11 @@ public class index extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCannyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCannyActionPerformed
-        insertImage(callCanny(imagemPanel), pImagem);
+        try {
+            imagemOriginal = ImageIO.read(Fileimg);
+            insertImage(callCanny(imagemOriginal), pImagem);
+        } catch (IOException ex) {
+        }
     }//GEN-LAST:event_btCannyActionPerformed
 
     private void btLoadImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoadImgActionPerformed
@@ -267,10 +360,11 @@ public class index extends javax.swing.JFrame {
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                imagemPanel = ImageIO.read(chooser.getSelectedFile());
+                Fileimg = chooser.getSelectedFile();
+                imagemOriginal = ImageIO.read(chooser.getSelectedFile());
             } catch (Exception ex) {
             }
-            insertImage(imagemPanel, pImagem);
+            insertImage(imagemOriginal, pImagem);
         }
     }//GEN-LAST:event_btLoadImgActionPerformed
 
@@ -287,10 +381,89 @@ public class index extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btSaveImgActionPerformed
 
-
     private void btSobelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSobelActionPerformed
-        insertImage(callSobel(imagemPanel), pImagem);
+        try {
+            imagemOriginal = ImageIO.read(Fileimg);
+            insertImage(callSobel(imagemOriginal), pImagem);
+        } catch (IOException ex) {
+        }
     }//GEN-LAST:event_btSobelActionPerformed
+
+    private void btCombineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCombineActionPerformed
+        try {
+//            // load source images
+//            BufferedImage overlay = ImageIO.read(new File("SobelEdge.png"));
+//            // create the new image, canvas size is the max. of both image sizes
+//            int w = Math.max(image.getWidth(), overlay.getWidth());
+//            int h = Math.max(image.getHeight(), overlay.getHeight());
+//            BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+//            // paint both images, preserving the alpha channels
+//            Graphics g = combined.getGraphics();
+//            g.drawImage(image, 0, 0, null);
+//            g.drawImage(overlay, 0, 0, null);
+//            // Save as new image
+//            ImageIO.write(combined, "PNG", new File("combined.png"));
+
+
+
+            BufferedImage image = ImageIO.read(new File("CannyEdge.png"));
+            int[] ori = new int[image.getWidth() * image.getHeight()];
+            PixelGrabber pg = new PixelGrabber(image, 0, 0, image.getWidth(), image.getHeight(), ori, 0, image.getWidth());
+            try {
+                pg.grabPixels();
+            } catch (Exception e) {
+                System.out.println("PixelGrabber failed");
+            }
+            BufferedImage image2 = ImageIO.read(new File("SobelEdge.png"));
+            int[] ori2 = new int[image2.getWidth() * image2.getHeight()];
+            PixelGrabber pg2 = new PixelGrabber(image2, 0, 0, image2.getWidth(), image2.getHeight(), ori2, 0, image2.getWidth());
+            try {
+                pg2.grabPixels();
+            } catch (Exception e) {
+                System.out.println("PixelGrabber failed");
+            }
+
+
+            int w = Math.max(image.getWidth(), image2.getWidth());
+            int h = Math.max(image.getHeight(), image2.getHeight());
+
+            int[] pixels = new int[w * h];
+            for (int j = 0; j < pixels.length; j++) {
+                if ((ori[j] & 0x00FFFFFF) != 0) {  //nao é preto, é branco
+                    pixels[j] = ori[j];
+                } else if ((ori2[j] & 0x00FFFFFF) != 0) { //nao é preto, é branco
+                    pixels[j] = ori2[j];
+                }
+            }
+            MemoryImageSource newImage = new MemoryImageSource(w, h, pixels, 0, w);
+            Canvas c = new Canvas();
+            Image finalImage = c.createImage(newImage);
+            //BufferedImage combine = combine.createGraphics();
+            imagemPanel.getGraphics().drawImage(finalImage, 0, 0, null);
+            insertImage(imagemPanel, pImagem);
+
+
+            ImageIO.write(imagemPanel, "PNG", new File("combined.png"));
+        } catch (Exception ex) {
+        }
+
+    }//GEN-LAST:event_btCombineActionPerformed
+
+    private void btRobertsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRobertsActionPerformed
+        try {
+            imagemOriginal = ImageIO.read(Fileimg);
+            insertImage(callRoberts(imagemOriginal), pImagem);
+        } catch (IOException ex) {
+        }
+    }//GEN-LAST:event_btRobertsActionPerformed
+
+    private void btPrewittActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPrewittActionPerformed
+        try {
+            imagemOriginal = ImageIO.read(Fileimg);
+            insertImage(callPrewitt(imagemOriginal), pImagem);
+        } catch (IOException ex) {
+        }
+    }//GEN-LAST:event_btPrewittActionPerformed
 
     /**
      * @param args the command line arguments
@@ -305,7 +478,10 @@ public class index extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btCanny;
+    private javax.swing.JButton btCombine;
     private javax.swing.JButton btLoadImg;
+    private javax.swing.JButton btPrewitt;
+    private javax.swing.JButton btRoberts;
     private javax.swing.JButton btSaveImg;
     private javax.swing.JButton btSobel;
     private javax.swing.JPanel jPanel1;
