@@ -28,8 +28,16 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="pImagem" min="-2" pref="400" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="pImagem" min="-2" pref="550" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jButton2" max="32767" attributes="1"/>
+                  <Component id="jScrollPane1" alignment="0" pref="113" max="32767" attributes="1"/>
+                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="btReadMask" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jButton1" alignment="0" max="32767" attributes="1"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -40,6 +48,18 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="pImagem" alignment="0" min="-2" pref="400" max="-2" attributes="0"/>
                   <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" pref="101" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btReadMask" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -55,6 +75,9 @@
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pImagemMouseClicked"/>
+      </Events>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
         <Property name="columns" type="int" value="0"/>
@@ -83,9 +106,13 @@
                       <Component id="btSobel" alignment="0" pref="107" max="32767" attributes="0"/>
                       <Component id="btRoberts" alignment="0" pref="107" max="32767" attributes="0"/>
                       <Component id="jPanel1" alignment="0" pref="107" max="32767" attributes="1"/>
-                      <Component id="jSeparator2" alignment="0" pref="107" max="32767" attributes="0"/>
-                      <Component id="btCombine" alignment="1" pref="107" max="32767" attributes="0"/>
                       <Component id="btPrewitt" alignment="0" pref="107" max="32767" attributes="0"/>
+                      <Component id="btCombine" alignment="0" pref="107" max="32767" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="cbGrey" alignment="0" max="32767" attributes="1"/>
+                          <Component id="cbOptions" alignment="0" pref="106" max="32767" attributes="1"/>
+                      </Group>
+                      <Component id="jSeparator2" alignment="1" pref="107" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -107,10 +134,14 @@
                   <Component id="btRoberts" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btPrewitt" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="51" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="btCombine" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
                   <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cbGrey" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cbOptions" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -209,46 +240,73 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="1"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt1MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="2"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt4MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="1"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt7MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="0"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt8MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="0"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt5MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="0"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt2MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="-1"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt3MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="-2"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt6MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txt9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="-1"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txt9MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -256,7 +314,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btCombine">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton1"/>
+            <Property name="text" type="java.lang.String" value="not working"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCombineActionPerformed"/>
@@ -278,7 +336,77 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btPrewittActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JComboBox" name="cbOptions">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="6">
+                <StringItem index="0" value="Default"/>
+                <StringItem index="1" value="Smoothing"/>
+                <StringItem index="2" value="Sharpening"/>
+                <StringItem index="3" value="Raised"/>
+                <StringItem index="4" value="Motion-blur"/>
+                <StringItem index="5" value="Edge Detection"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbOptionsItemStateChanged"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="cbGrey">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Colored?"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextArea" name="txtMask">
+          <Properties>
+            <Property name="columns" type="int" value="20"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Courier New" size="14" style="0"/>
+            </Property>
+            <Property name="rows" type="int" value="5"/>
+            <Property name="text" type="java.lang.String" value="-1 -1 -1&#xa;0 0 0&#xa;1 1 1&#xa;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="mask"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btReadMask">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="read Mask"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btReadMaskActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="apply mask"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="re-apply mask"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

@@ -1,12 +1,18 @@
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -31,12 +37,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class index extends javax.swing.JFrame {
 
     private File Fileimg;
+    private double[] array_3x3;
     private BufferedImage imagemOriginal;
     private BufferedImage imagemPanel;
+    double mask[][];
 
     /** Creates new form index */
     public index() {
         initComponents();
+    }
+
+    private void getMatrix() {
     }
 
     private BufferedImage callSobel(BufferedImage img) {
@@ -44,16 +55,16 @@ public class index extends javax.swing.JFrame {
         try {
             //create the detector
             SobelEdgeDetector detector = new SobelEdgeDetector();
-            int[] array3x3 = new int[9];
-            array3x3[0] = Integer.parseInt(txt1.getText());
-            array3x3[1] = Integer.parseInt(txt2.getText());
-            array3x3[2] = Integer.parseInt(txt3.getText());
-            array3x3[3] = Integer.parseInt(txt4.getText());
-            array3x3[4] = Integer.parseInt(txt5.getText());
-            array3x3[5] = Integer.parseInt(txt6.getText());
-            array3x3[6] = Integer.parseInt(txt7.getText());
-            array3x3[7] = Integer.parseInt(txt8.getText());
-            array3x3[8] = Integer.parseInt(txt9.getText());
+            double[] array3x3 = new double[9];
+            array3x3[0] = Double.parseDouble(txt1.getText());
+            array3x3[1] = Double.parseDouble(txt2.getText());
+            array3x3[2] = Double.parseDouble(txt3.getText());
+            array3x3[3] = Double.parseDouble(txt4.getText());
+            array3x3[4] = Double.parseDouble(txt5.getText());
+            array3x3[5] = Double.parseDouble(txt6.getText());
+            array3x3[6] = Double.parseDouble(txt7.getText());
+            array3x3[7] = Double.parseDouble(txt8.getText());
+            array3x3[8] = Double.parseDouble(txt9.getText());
             detector.setArray3x3(array3x3);
             //apply it to an image
             detector.setSourceImage(img);
@@ -124,7 +135,13 @@ public class index extends javax.swing.JFrame {
     private void insertImage(BufferedImage img, JPanel jpanel) {
         try {
             Graphics g = jpanel.getGraphics();
-            g.drawImage(img, 0, 0, jpanel.getWidth(), jpanel.getHeight(), jpanel);
+            g.setColor(jpanel.getBackground());
+            g.fillRect(0, 0, jpanel.getWidth(), jpanel.getWidth());
+            if ((img.getWidth() > jpanel.getWidth()) || (img.getHeight() > jpanel.getHeight())) {
+                g.drawImage(img, 0, 0, jpanel.getWidth(), jpanel.getHeight(), jpanel);
+            } else {
+                g.drawImage(img, 0, 0, jpanel);
+            }
         } catch (Exception ex) {
         }
     }
@@ -159,10 +176,23 @@ public class index extends javax.swing.JFrame {
         btCombine = new javax.swing.JButton();
         btRoberts = new javax.swing.JButton();
         btPrewitt = new javax.swing.JButton();
+        cbOptions = new javax.swing.JComboBox();
+        cbGrey = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtMask = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        btReadMask = new javax.swing.JToggleButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pImagem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pImagem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pImagemMouseClicked(evt);
+            }
+        });
         pImagem.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Menu"));
@@ -196,22 +226,67 @@ public class index extends javax.swing.JFrame {
         });
 
         txt1.setText("1");
+        txt1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt1MouseClicked(evt);
+            }
+        });
 
         txt4.setText("2");
+        txt4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt4MouseClicked(evt);
+            }
+        });
 
         txt7.setText("1");
+        txt7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt7MouseClicked(evt);
+            }
+        });
 
         txt8.setText("0");
+        txt8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt8MouseClicked(evt);
+            }
+        });
 
         txt5.setText("0");
+        txt5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt5MouseClicked(evt);
+            }
+        });
 
         txt2.setText("0");
+        txt2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt2MouseClicked(evt);
+            }
+        });
 
         txt3.setText("-1");
+        txt3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt3MouseClicked(evt);
+            }
+        });
 
         txt6.setText("-2");
+        txt6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt6MouseClicked(evt);
+            }
+        });
 
         txt9.setText("-1");
+        txt9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt9MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -253,7 +328,7 @@ public class index extends javax.swing.JFrame {
                     .addComponent(txt9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        btCombine.setText("jButton1");
+        btCombine.setText("not working");
         btCombine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCombineActionPerformed(evt);
@@ -274,6 +349,15 @@ public class index extends javax.swing.JFrame {
             }
         });
 
+        cbOptions.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default", "Smoothing", "Sharpening", "Raised", "Motion-blur", "Edge Detection" }));
+        cbOptions.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbOptionsItemStateChanged(evt);
+            }
+        });
+
+        cbGrey.setText("Colored?");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -288,9 +372,12 @@ public class index extends javax.swing.JFrame {
                     .addComponent(btSobel, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                     .addComponent(btRoberts, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(btCombine, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(btPrewitt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                    .addComponent(btPrewitt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(btCombine, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(cbGrey, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbOptions, javax.swing.GroupLayout.Alignment.LEADING, 0, 106, Short.MAX_VALUE))
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -309,14 +396,47 @@ public class index extends javax.swing.JFrame {
                 .addComponent(btRoberts)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btPrewitt)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btCombine)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbGrey)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        txtMask.setColumns(20);
+        txtMask.setFont(new java.awt.Font("Courier New", 0, 14));
+        txtMask.setRows(5);
+        txtMask.setText("-1 -1 -1\n0 0 0\n1 1 1\n");
+        jScrollPane1.setViewportView(txtMask);
+
+        jLabel1.setText("mask");
+
+        btReadMask.setText("read Mask");
+        btReadMask.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btReadMaskActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("apply mask");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("re-apply mask");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -326,7 +446,14 @@ public class index extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(btReadMask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -335,7 +462,18 @@ public class index extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btReadMask)
+                        .addGap(11, 11, 11)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
                 .addContainerGap())
         );
 
@@ -346,11 +484,7 @@ public class index extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCannyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCannyActionPerformed
-        try {
-            imagemOriginal = ImageIO.read(Fileimg);
-            insertImage(callCanny(imagemOriginal), pImagem);
-        } catch (IOException ex) {
-        }
+        insertImage(callCanny(imagemOriginal), pImagem);
     }//GEN-LAST:event_btCannyActionPerformed
 
     private void btLoadImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoadImgActionPerformed
@@ -382,11 +516,7 @@ public class index extends javax.swing.JFrame {
     }//GEN-LAST:event_btSaveImgActionPerformed
 
     private void btSobelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSobelActionPerformed
-        try {
-            imagemOriginal = ImageIO.read(Fileimg);
-            insertImage(callSobel(imagemOriginal), pImagem);
-        } catch (IOException ex) {
-        }
+        insertImage(callSobel(imagemOriginal), pImagem);
     }//GEN-LAST:event_btSobelActionPerformed
 
     private void btCombineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCombineActionPerformed
@@ -450,20 +580,238 @@ public class index extends javax.swing.JFrame {
     }//GEN-LAST:event_btCombineActionPerformed
 
     private void btRobertsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRobertsActionPerformed
-        try {
-            imagemOriginal = ImageIO.read(Fileimg);
-            insertImage(callRoberts(imagemOriginal), pImagem);
-        } catch (IOException ex) {
-        }
+        insertImage(callRoberts(imagemOriginal), pImagem);
     }//GEN-LAST:event_btRobertsActionPerformed
 
     private void btPrewittActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPrewittActionPerformed
-        try {
-            imagemOriginal = ImageIO.read(Fileimg);
-            insertImage(callPrewitt(imagemOriginal), pImagem);
-        } catch (IOException ex) {
-        }
+        insertImage(callPrewitt(imagemOriginal), pImagem);
     }//GEN-LAST:event_btPrewittActionPerformed
+
+    private void btReadMaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReadMaskActionPerformed
+        String txt = txtMask.getText();
+        String[] line = txt.split("\n");
+        int lines = line.length;
+        mask = new double[lines][];
+
+        for (int y = 0; y < lines; y++) {
+            String[] elem = line[y].split(" ");
+            mask[y] = new double[elem.length];
+            for (int x = 0; x < elem.length; x++) {
+                mask[y][x] = Double.parseDouble(elem[x]);
+            }
+        }
+        for (int y = 0; y < mask.length; y++) {
+            System.out.println("");
+            for (int x = 0; x < mask[y].length; x++) {
+                System.out.print(mask[y][x] + "\t");
+            }
+        }
+    }//GEN-LAST:event_btReadMaskActionPerformed
+
+    private void readMask() {
+        String str = "";
+        txtMask.setText(txtMask.getText().trim());
+        mask = new double[txtMask.getLineCount()][];
+        try {
+            BufferedReader in = new BufferedReader(new StringReader(txtMask.getText()));
+            int y = 0;
+            while ((str = in.readLine()) != null) {
+                String[] elem = str.split(" ");
+                mask[y] = new double[elem.length];
+                for (int x = 0; x < elem.length; x++) {
+                    mask[y][x] = Double.parseDouble(elem[x]);
+                }
+                y++;
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private void setMask() {
+        readMask();
+        if (cbGrey.isSelected()) {
+            BufferedImage buff = new BufferedImage(imagemOriginal.getWidth(), imagemOriginal.getHeight(), imagemOriginal.getType());
+            Kernel kernel = new Kernel(3, 3, new float[]{
+                        Float.parseFloat(txt1.getText()), Float.parseFloat(txt2.getText()), Float.parseFloat(txt3.getText()),
+                        Float.parseFloat(txt4.getText()), Float.parseFloat(txt5.getText()), Float.parseFloat(txt6.getText()),
+                        Float.parseFloat(txt7.getText()), Float.parseFloat(txt8.getText()), Float.parseFloat(txt9.getText())
+                    });
+            ConvolveOp op = new ConvolveOp(kernel);
+            op.filter(imagemOriginal, buff);
+            imagemPanel = buff;
+            insertImage(buff, pImagem);
+        } else {
+            //converte a imagem para preto e branco
+            BufferedImage image = new BufferedImage(imagemOriginal.getWidth(), imagemOriginal.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            Graphics g = image.getGraphics();
+            g.drawImage(imagemOriginal, 0, 0, imagemOriginal.getWidth(), imagemOriginal.getHeight(), null);
+            g.dispose();
+
+            BufferedImage buff = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+            Kernel kernel = new Kernel(3, 3, new float[]{
+                        Float.parseFloat(txt1.getText()), Float.parseFloat(txt2.getText()), Float.parseFloat(txt3.getText()),
+                        Float.parseFloat(txt4.getText()), Float.parseFloat(txt5.getText()), Float.parseFloat(txt6.getText()),
+                        Float.parseFloat(txt7.getText()), Float.parseFloat(txt8.getText()), Float.parseFloat(txt9.getText())
+                    });
+            ConvolveOp op = new ConvolveOp(kernel);
+            op.filter(image, buff);
+            imagemPanel = buff;
+            insertImage(buff, pImagem);
+
+        }
+    }
+
+//    private void applyMask(int py, int px) {
+//        int cx = mask[0].length / 2;
+//        int cy = mask.length / 2;
+//        //  System.out.print("\n PIXEL " + px + " : " + py + " : ");
+//        double sum = 0;
+//        for (int y = -cy; y <= cy; y++) {
+//            for (int x = -cx; x <= cx; x++) {
+//                //garantir que o pixel existe
+//                if (px + x < imagemOriginal.getWidth() && px + x >= 0
+//                        && py + y < imagemOriginal.getHeight() && py + y >= 0) {
+//                    //  System.out.print(" ("+(y+py) + " " + (x+px)+")");
+//                    sum += imagemOriginal.getRGB(px + x, py + y) * mask[y + cy][x + cx];
+//                }
+//            }
+//
+//        }
+//        //colocar na edge
+//        imagemOriginal.setRGB(px, py, (int) sum);
+//    }
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+//        try {
+//            imagemOriginal = ImageIO.read(Fileimg);
+//            for (int i = 0; i < imagemOriginal.getHeight(); i++) {
+//                for (int j = 0; j < imagemOriginal.getWidth(); j++) {
+//                    applyMask(i, j);
+//                }
+//            }
+//            insertImage(imagemOriginal, pImagem);
+//        } catch (IOException ex) {
+//            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        setMask();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txt1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt1MouseClicked
+        txt1.selectAll();
+    }//GEN-LAST:event_txt1MouseClicked
+
+    private void txt2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt2MouseClicked
+        txt2.selectAll();
+    }//GEN-LAST:event_txt2MouseClicked
+
+    private void txt3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt3MouseClicked
+        txt3.selectAll();
+    }//GEN-LAST:event_txt3MouseClicked
+
+    private void txt4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt4MouseClicked
+        txt4.selectAll();
+    }//GEN-LAST:event_txt4MouseClicked
+
+    private void txt5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt5MouseClicked
+        txt5.selectAll();
+    }//GEN-LAST:event_txt5MouseClicked
+
+    private void txt6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt6MouseClicked
+        txt6.selectAll();
+    }//GEN-LAST:event_txt6MouseClicked
+
+    private void txt7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt7MouseClicked
+        txt7.selectAll();
+    }//GEN-LAST:event_txt7MouseClicked
+
+    private void txt8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt8MouseClicked
+        txt8.selectAll();
+    }//GEN-LAST:event_txt8MouseClicked
+
+    private void txt9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt9MouseClicked
+        txt9.selectAll();
+    }//GEN-LAST:event_txt9MouseClicked
+
+    private void cbOptionsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbOptionsItemStateChanged
+        int Selection;
+        Selection = cbOptions.getSelectedIndex();
+        if (Selection == 0) {
+            txt1.setText("1");
+            txt2.setText("0");
+            txt3.setText("-1");
+            txt4.setText("2");
+            txt5.setText("0");
+            txt6.setText("-2");
+            txt7.setText("1");
+            txt8.setText("0");
+            txt9.setText("-1");
+        } else if (Selection == 1) {
+            txt1.setText("1");
+            txt2.setText("1");
+            txt3.setText("1");
+            txt4.setText("1");
+            txt5.setText("2");
+            txt6.setText("1");
+            txt7.setText("1");
+            txt8.setText("1");
+            txt9.setText("1");
+        } else if (Selection == 2) {
+            txt1.setText("-1");
+            txt2.setText("-1");
+            txt3.setText("-1");
+            txt4.setText("-1");
+            txt5.setText("9");
+            txt6.setText("-1");
+            txt7.setText("-1");
+            txt8.setText("-1");
+            txt9.setText("-1");
+        } else if (Selection == 3) {
+            txt1.setText("0");
+            txt2.setText("0");
+            txt3.setText("-2");
+            txt4.setText("0");
+            txt5.setText("2");
+            txt6.setText("0");
+            txt7.setText("1");
+            txt8.setText("0");
+            txt9.setText("0");
+        } else if (Selection == 4) {
+            txt1.setText("0");
+            txt2.setText("0");
+            txt3.setText("1");
+            txt4.setText("0");
+            txt5.setText("0");
+            txt6.setText("0");
+            txt7.setText("1");
+            txt8.setText("0");
+            txt9.setText("0");
+        } else if (Selection == 5) {
+            txt1.setText("-1");
+            txt2.setText("-1");
+            txt3.setText("-1");
+            txt4.setText("-1");
+            txt5.setText("8");
+            txt6.setText("-1");
+            txt7.setText("-1");
+            txt8.setText("-1");
+            txt9.setText("-1");
+        }
+    }//GEN-LAST:event_cbOptionsItemStateChanged
+
+    private void pImagemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pImagemMouseClicked
+        btLoadImg.doClick();
+    }//GEN-LAST:event_pImagemMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        BufferedImage buff = new BufferedImage(imagemPanel.getWidth(), imagemPanel.getHeight(), imagemPanel.getType());
+        Kernel kernel = new Kernel(3, 3, new float[]{
+                    Float.parseFloat(txt1.getText()), Float.parseFloat(txt2.getText()), Float.parseFloat(txt3.getText()),
+                    Float.parseFloat(txt4.getText()), Float.parseFloat(txt5.getText()), Float.parseFloat(txt6.getText()),
+                    Float.parseFloat(txt7.getText()), Float.parseFloat(txt8.getText()), Float.parseFloat(txt9.getText())
+                });
+        ConvolveOp op = new ConvolveOp(kernel);
+        op.filter(imagemPanel, buff);
+        insertImage(buff, pImagem);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -481,11 +829,18 @@ public class index extends javax.swing.JFrame {
     private javax.swing.JButton btCombine;
     private javax.swing.JButton btLoadImg;
     private javax.swing.JButton btPrewitt;
+    private javax.swing.JToggleButton btReadMask;
     private javax.swing.JButton btRoberts;
     private javax.swing.JButton btSaveImg;
     private javax.swing.JButton btSobel;
+    private javax.swing.JCheckBox cbGrey;
+    private javax.swing.JComboBox cbOptions;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPanel pImagem;
@@ -498,5 +853,6 @@ public class index extends javax.swing.JFrame {
     private javax.swing.JTextField txt7;
     private javax.swing.JTextField txt8;
     private javax.swing.JTextField txt9;
+    private javax.swing.JTextArea txtMask;
     // End of variables declaration//GEN-END:variables
 }

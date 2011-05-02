@@ -11,10 +11,10 @@ public class SobelEdgeDetector {
     private BufferedImage edgesImage;
     private int height;
     private int width;
-    private int[] array3x3;
+    private double[]mask;
 
     public SobelEdgeDetector() {
-        array3x3 = new int[9];
+        mask = new double[9];
     }
 
     public void setSourceImage(BufferedImage image) {
@@ -56,18 +56,18 @@ public class SobelEdgeDetector {
         int processedpixels[] = new int[width * height];
         for (int r = 1; r < height - 1; r++) {
             for (int c = 1; c < width - 1; c++) {
-                int Gx = array3x3[0] * colormatrix[r - 1][c - 1]
-                        + array3x3[3] * colormatrix[r][c - 1]
-                        + array3x3[6] * colormatrix[r + 1][c - 1]
-                        + array3x3[5] * colormatrix[r - 1][c - 1]
-                        + array3x3[2] * colormatrix[r][c]
-                        + array3x3[8] * colormatrix[r + 1][c + 1];
-                int Gy = array3x3[0] * colormatrix[r - 1][c - 1]
-                        + array3x3[3] * colormatrix[r - 1][c]
-                        + array3x3[6] * colormatrix[r - 1][c + 1]
-                        + array3x3[2] * colormatrix[r + 1][c - 1]
-                        + array3x3[5] * colormatrix[r + 1][c]
-                        + array3x3[8] * colormatrix[r + 1][c + 1];
+                double Gx = mask[0] * colormatrix[r - 1][c - 1]
+                        + mask[3] * colormatrix[r][c - 1]
+                        + mask[6] * colormatrix[r + 1][c - 1]
+                        + mask[5] * colormatrix[r - 1][c - 1]
+                        + mask[2] * colormatrix[r][c]
+                        + mask[8] * colormatrix[r + 1][c + 1];
+                double Gy = mask[0] * colormatrix[r - 1][c - 1]
+                        + mask[3] * colormatrix[r - 1][c]
+                        + mask[6] * colormatrix[r - 1][c + 1]
+                        + mask[2] * colormatrix[r + 1][c - 1]
+                        + mask[5] * colormatrix[r + 1][c]
+                        + mask[8] * colormatrix[r + 1][c + 1];
                 G[r][c] = (int) Math.sqrt(Gx * Gx + Gy * Gy);
                 int k = G[r][c];
                 //convert back to array
@@ -88,7 +88,7 @@ public class SobelEdgeDetector {
     /**
      * @param array3x3 the array3x3 to set
      */
-    public void setArray3x3(int[] array3x3) {
-        this.array3x3 = array3x3;
+    public void setArray3x3(double[] array3x3) {
+        this.mask = array3x3;
     }
 }
