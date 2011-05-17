@@ -17,6 +17,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -36,7 +37,7 @@ public class index extends javax.swing.JFrame {
     private File Fileimg;
     private double[] array_3x3;
     private BufferedImage imagemOriginal;
-    private BufferedImage imagemPanel;
+    private BufferedImage imagemFinal;
     double mask[][];
 
     /** Creates new form index */
@@ -67,7 +68,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("SobelEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,7 +88,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getEdgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("CannyEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -104,7 +105,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("RobertsEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,7 +122,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("PrewittEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -506,7 +507,7 @@ public class index extends javax.swing.JFrame {
         int returnVal = chooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                ImageIO.write(imagemPanel, "PNG", chooser.getSelectedFile());
+                ImageIO.write(imagemFinal, "PNG", chooser.getSelectedFile());
             } catch (Exception ex) {
             }
         }
@@ -566,11 +567,11 @@ public class index extends javax.swing.JFrame {
             Canvas c = new Canvas();
             Image finalImage = c.createImage(newImage);
             //BufferedImage combine = combine.createGraphics();
-            imagemPanel.getGraphics().drawImage(finalImage, 0, 0, null);
-            insertImage(imagemPanel, pImagem);
+            imagemFinal.getGraphics().drawImage(finalImage, 0, 0, null);
+            insertImage(imagemFinal, pImagem);
 
 
-            ImageIO.write(imagemPanel, "PNG", new File("combined.png"));
+            ImageIO.write(imagemFinal, "PNG", new File("combined.png"));
         } catch (Exception ex) {
         }
 
@@ -635,7 +636,7 @@ public class index extends javax.swing.JFrame {
                     });
             ConvolveOp op = new ConvolveOp(kernel);
             op.filter(imagemOriginal, buff);
-            imagemPanel = buff;
+            imagemFinal = buff;
             insertImage(buff, pImagem);
         } else {
             //converte a imagem para preto e branco
@@ -652,7 +653,7 @@ public class index extends javax.swing.JFrame {
                     });
             ConvolveOp op = new ConvolveOp(kernel);
             op.filter(image, buff);
-            imagemPanel = buff;
+            imagemFinal = buff;
             insertImage(buff, pImagem);
 
         }
@@ -732,65 +733,17 @@ public class index extends javax.swing.JFrame {
         int Selection;
         Selection = cbOptions.getSelectedIndex();
         if (Selection == 0) {
-            txt1.setText("1");
-            txt2.setText("0");
-            txt3.setText("-1");
-            txt4.setText("2");
-            txt5.setText("0");
-            txt6.setText("-2");
-            txt7.setText("1");
-            txt8.setText("0");
-            txt9.setText("-1");
+            txtMask.setText("1 0 -1\n2 0 -2\n1 0 -1");
         } else if (Selection == 1) {
-            txt1.setText("1");
-            txt2.setText("1");
-            txt3.setText("1");
-            txt4.setText("1");
-            txt5.setText("2");
-            txt6.setText("1");
-            txt7.setText("1");
-            txt8.setText("1");
-            txt9.setText("1");
+            txtMask.setText("1 1 1\n1 2 1\n1 1 1");
         } else if (Selection == 2) {
-            txt1.setText("-1");
-            txt2.setText("-1");
-            txt3.setText("-1");
-            txt4.setText("-1");
-            txt5.setText("9");
-            txt6.setText("-1");
-            txt7.setText("-1");
-            txt8.setText("-1");
-            txt9.setText("-1");
+            txtMask.setText("-1 -1 -1\n-1 9 -1\n-1 -1 -1");
         } else if (Selection == 3) {
-            txt1.setText("0");
-            txt2.setText("0");
-            txt3.setText("-2");
-            txt4.setText("0");
-            txt5.setText("2");
-            txt6.setText("0");
-            txt7.setText("1");
-            txt8.setText("0");
-            txt9.setText("0");
+            txtMask.setText("0 0 -2\n0 2 0\n1 0 0");
         } else if (Selection == 4) {
-            txt1.setText("0");
-            txt2.setText("0");
-            txt3.setText("1");
-            txt4.setText("0");
-            txt5.setText("0");
-            txt6.setText("0");
-            txt7.setText("1");
-            txt8.setText("0");
-            txt9.setText("0");
+            txtMask.setText("0 0 1\n0 0 0\n1 0 0");
         } else if (Selection == 5) {
-            txt1.setText("-1");
-            txt2.setText("-1");
-            txt3.setText("-1");
-            txt4.setText("-1");
-            txt5.setText("8");
-            txt6.setText("-1");
-            txt7.setText("-1");
-            txt8.setText("-1");
-            txt9.setText("-1");
+            txtMask.setText("-1 -1 -1\n-1 8 -1\n-1 -1 -1");
         }
     }//GEN-LAST:event_cbOptionsItemStateChanged
 
@@ -799,14 +752,14 @@ public class index extends javax.swing.JFrame {
     }//GEN-LAST:event_pImagemMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        BufferedImage buff = new BufferedImage(imagemPanel.getWidth(), imagemPanel.getHeight(), imagemPanel.getType());
+        BufferedImage buff = new BufferedImage(imagemFinal.getWidth(), imagemFinal.getHeight(), imagemFinal.getType());
         Kernel kernel = new Kernel(3, 3, new float[]{
                     Float.parseFloat(txt1.getText()), Float.parseFloat(txt2.getText()), Float.parseFloat(txt3.getText()),
                     Float.parseFloat(txt4.getText()), Float.parseFloat(txt5.getText()), Float.parseFloat(txt6.getText()),
                     Float.parseFloat(txt7.getText()), Float.parseFloat(txt8.getText()), Float.parseFloat(txt9.getText())
                 });
         ConvolveOp op = new ConvolveOp(kernel);
-        op.filter(imagemPanel, buff);
+        op.filter(imagemFinal, buff);
         insertImage(buff, pImagem);
     }//GEN-LAST:event_jButton2ActionPerformed
 

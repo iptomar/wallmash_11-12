@@ -39,7 +39,7 @@ public class index extends javax.swing.JFrame {
     private File Fileimg;
     private double[] array_3x3;
     private BufferedImage imagemOriginal;
-    private BufferedImage imagemPanel;
+    private BufferedImage imagemFinal;
     private double[][] mask;
     private float[] k_mask;
 
@@ -48,9 +48,8 @@ public class index extends javax.swing.JFrame {
         initComponents();
     }
 
-    private void getMatrix() {
-    }
-
+    
+    
     private BufferedImage callSobel(BufferedImage img) {
         BufferedImage edges = null;
         try {
@@ -61,7 +60,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("SobelEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,6 +68,8 @@ public class index extends javax.swing.JFrame {
         return edges;
     }
 
+    
+    
     private BufferedImage callCanny(BufferedImage img) {
         BufferedImage edges = null;
         try {
@@ -81,7 +82,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getEdgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("CannyEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,7 +99,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("RobertsEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,7 +116,7 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getedgesImage();
-            imagemPanel = edges;
+            imagemFinal = edges;
             ImageIO.write(edges, "PNG", new File("PrewittEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
@@ -385,7 +386,7 @@ public class index extends javax.swing.JFrame {
         int returnVal = chooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                ImageIO.write(imagemPanel, "PNG", chooser.getSelectedFile());
+                ImageIO.write(imagemFinal, "PNG", chooser.getSelectedFile());
             } catch (Exception ex) {
             }
         }
@@ -446,11 +447,11 @@ public class index extends javax.swing.JFrame {
             Canvas c = new Canvas();
             Image finalImage = c.createImage(newImage);
             //BufferedImage combine = combine.createGraphics();
-            imagemPanel.getGraphics().drawImage(finalImage, 0, 0, null);
-            insertImage(imagemPanel, pImagem);
+            imagemFinal.getGraphics().drawImage(finalImage, 0, 0, null);
+            insertImage(imagemFinal, pImagem);
 
 
-            ImageIO.write(imagemPanel, "PNG", new File("combined.png"));
+            ImageIO.write(imagemFinal, "PNG", new File("combined.png"));
         } catch (Exception ex) {
         }
 
@@ -519,7 +520,7 @@ public class index extends javax.swing.JFrame {
             Kernel kernel = new Kernel(mask.length, mask[0].length, k_mask);
             ConvolveOp op = new ConvolveOp(kernel);
             op.filter(imagemOriginal, buff);
-            imagemPanel = buff;
+            imagemFinal = buff;
             insertImage(deepCopy(buff), pImagem);
         } else {
             //converte a imagem para preto e branco
@@ -532,7 +533,7 @@ public class index extends javax.swing.JFrame {
             Kernel kernel = new Kernel(mask.length, mask[0].length, k_mask);
             ConvolveOp op = new ConvolveOp(kernel);
             op.filter(image, buff);
-            imagemPanel = buff;
+            imagemFinal = buff;
             insertImage(deepCopy(buff), pImagem);
         }
     }
@@ -630,10 +631,10 @@ public class index extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         readMask();
-        BufferedImage buff = new BufferedImage(imagemPanel.getWidth(), imagemPanel.getHeight(), imagemPanel.getType());
+        BufferedImage buff = new BufferedImage(imagemFinal.getWidth(), imagemFinal.getHeight(), imagemFinal.getType());
         Kernel kernel = new Kernel(3, 3, k_mask);
         ConvolveOp op = new ConvolveOp(kernel);
-        op.filter(imagemPanel, buff);
+        op.filter(imagemFinal, buff);
         insertImage(buff, pImagem);
     }//GEN-LAST:event_jButton2ActionPerformed
 

@@ -23,17 +23,24 @@ public class SobelEdgeDetector {
     }
 
     public void process() {
+        //obter largura da imagem
         width = sourceImage.getWidth();
+        //obter altura da imagem
         height = sourceImage.getHeight();
+        //construir um array para armazenar informação de todos os pixeis
         int[] ori = new int[width * height];
+        //Criar agarrador para todos os pixels da imagem
         PixelGrabber pg = new PixelGrabber(sourceImage, 0, 0, width, height, ori, 0, width);
         try {
+            //pedir informação acerca dos pixeis
             pg.grabPixels();
         } catch (Exception e) {
             System.out.println("PixelGrabber failed");
         }
-
+        
+        //novo array para guardar nova informação sobre os pixeis tratados
         int temppixels[] = new int[height * width];
+        //percorrer o array original e converter para escala de cinzas
         for (int i = 0; i < width * height; i++) {
             int p = ori[i];
             //extracts the red, green, and blue bits from the pixel
@@ -45,29 +52,38 @@ public class SobelEdgeDetector {
 
             temppixels[i] = k;
         }
+        
+        //transformar o array de cinzas numa matriz 
         int colormatrix[][] = new int[height][width];
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
                 colormatrix[r][c] = temppixels[r * width + c];
             }
         }
-
+        
+        
         int G[][] = new int[height][width];
         int processedpixels[] = new int[width * height];
         for (int r = 1; r < height - 1; r++) {
             for (int c = 1; c < width - 1; c++) {
                 double Gx = mask[0] * colormatrix[r - 1][c - 1]
+                        + mask[1] * colormatrix[r -1 ][c]
+                        + mask[2] * colormatrix[r - 1][c + 1]
                         + mask[3] * colormatrix[r][c - 1]
+                        + mask[4] * colormatrix[r][c]
+                        + mask[5] * colormatrix[r][c + 1]
                         + mask[6] * colormatrix[r + 1][c - 1]
-                        + mask[5] * colormatrix[r - 1][c - 1]
-                        + mask[2] * colormatrix[r][c]
+                        + mask[7] * colormatrix[r + 1][c]
                         + mask[8] * colormatrix[r + 1][c + 1];
-                double Gy = mask[0] * colormatrix[r - 1][c - 1]
-                        + mask[3] * colormatrix[r - 1][c]
-                        + mask[6] * colormatrix[r - 1][c + 1]
-                        + mask[2] * colormatrix[r + 1][c - 1]
+                double Gy = mask[6] * colormatrix[r - 1][c - 1]
+                        + mask[3] * colormatrix[r -1 ][c]
+                        + mask[0] * colormatrix[r - 1][c + 1]
+                        + mask[7] * colormatrix[r][c - 1]
+                        + mask[4] * colormatrix[r][c]
+                        + mask[1] * colormatrix[r][c + 1]
+                        + mask[8] * colormatrix[r + 1][c - 1]
                         + mask[5] * colormatrix[r + 1][c]
-                        + mask[8] * colormatrix[r + 1][c + 1];
+                        + mask[2] * colormatrix[r + 1][c + 1];
                 G[r][c] = (int) Math.sqrt(Gx * Gx + Gy * Gy);
                 int k = G[r][c];
                 //convert back to array
