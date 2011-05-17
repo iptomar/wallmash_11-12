@@ -1,8 +1,6 @@
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -11,7 +9,6 @@ import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -631,7 +628,7 @@ public class index extends javax.swing.JFrame {
         readMask();
         if (cbGrey.isSelected()) {
             BufferedImage buff = new BufferedImage(imagemOriginal.getWidth(), imagemOriginal.getHeight(), imagemOriginal.getType());
-            Kernel kernel = new Kernel(3, 3, new float[]{
+            Kernel kernel = new Kernel     (3, 3, new float[]{
                         Float.parseFloat(txt1.getText()), Float.parseFloat(txt2.getText()), Float.parseFloat(txt3.getText()),
                         Float.parseFloat(txt4.getText()), Float.parseFloat(txt5.getText()), Float.parseFloat(txt6.getText()),
                         Float.parseFloat(txt7.getText()), Float.parseFloat(txt8.getText()), Float.parseFloat(txt9.getText())
