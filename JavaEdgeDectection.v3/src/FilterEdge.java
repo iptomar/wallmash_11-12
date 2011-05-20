@@ -28,15 +28,23 @@ public class FilterEdge {
     }
 
     public double[][] rotate(double[][] mask) {
-        int w = mask.length;
-        int h = mask[0].length;
-        double[][] masktmp = new double[h][w];
-        for (int i = 0; i < h; ++i) {
-            for (int j = 0; j < w; ++j) {
-                masktmp[i][j] = mask[j][h - i - 1];
+        int h = mask.length;
+        int w = mask[0].length;
+        double[] masktmp = new double[h * w];
+        double[][] rotated = new double[w][h];
+        int k = 0;
+        for (int i = 0; i < w; i++) {
+            for (int j = h - 1; j >= 0; j--) {
+                masktmp[k++] = mask[j][i];
             }
         }
-        return masktmp;
+        k = 0;
+        for (int j = 0; j < w; j++) {
+            for (int i = 0; i < h; i++) {
+                rotated[j][i] = masktmp[k++];
+            }
+        }
+        return rotated;
     }
 
     public int lum(int r, int g, int b) {
@@ -71,30 +79,80 @@ public class FilterEdge {
         BufferedImage ret = cloneImage(image);
         int width = image.getWidth();
         int height = image.getHeight();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+
+        //find mask range
+        int auxHx = maskx.length / -2;
+        int auxWx = maskx[0].length / -2;
+
+        //adjust range if número for par
+        if (maskx.length % 2 == 0) {
+            auxHx += 1;
+        }
+
+        if (maskx[0].length % 2 == 0) {
+            auxWx += 1;
+        }
+
+        //find mask range
+        int auxHy = masky.length / -2;
+        int auxWy = masky[0].length / -2;
+
+        //adjust range if mask width and/or heigth are even numbers
+        if (masky.length % 2 == 0) {
+            auxHy += 1;
+        }
+
+        if (masky[0].length % 2 == 0) {
+            auxWy += 1;
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 int level = 255;
-                if ((x > 0) && (x < (width - 1)) && (y > 0) && (y < (height - 1))) {
-                    int sumX = 0;
-                    int sumY = 0;
-                    for (int i = -1; i < 2; i++) {
-                        for (int j = -1; j < 2; j++) {
-                            //level += rgb_to_luminance(image.getRGB(x + i, y + j)) * mask[i + 1][j + 1];
-                            sumX += rgb_to_luminance(image.getRGB(x + i, y + j)) * maskx[i + 1][j + 1];
-                            sumY += rgb_to_luminance(image.getRGB(x + i, y + j)) * masky[i + 1][j + 1];
-                            //System.out.println(sumX + " " + sumY);
+
+                int sumX = 0;
+//                System.out.println("\n\n\nSUMX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                for (int yy = 0, mH = auxHx; yy < maskx.length; yy++, mH++) {
+//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
+                    if (y + mH >= 0 && y + mH < height) {
+//                        System.out.println(" FEZ");
+                        for (int xx = 0, mW = auxWx; xx < maskx[0].length; xx++, mW++) {
+//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
+                            if (x + mW >= 0 && x + mW < width) {
+//                                System.out.println(" FEZ");
+                                sumX += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
+                            }
                         }
                     }
-                    level = Math.abs(sumX) + Math.abs(sumY);
-                    if (level < 0) {
-                        level = 0;
-                    } else if (level > 255) {
-                        level = 255;
+                }
+
+                int sumY = 0;
+//                System.out.println("\n\n\nSUMY YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+                for (int yy = 0, mH = auxHy; yy < masky.length; yy++, mH++) {
+//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
+                    if (y + mH >= 0 && y + mH < height) {
+//                        System.out.println(" FEZ");
+                        for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
+//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
+                            if (x + mW >= 0 && x + mW < width) {
+//                                System.out.println(" FEZ");
+                                sumY += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
+                            }
+                        }
                     }
                 }
-                ret.setRGB(x, y, level_to_greyscale(level));
+
+                level = Math.abs(sumX) + Math.abs(sumY);
+                if (level < 0) {
+                    level = 0;
+                } else if (level > 255) {
+                    level = 255;
+                }
+
+                ret.setRGB(x,y , level_to_greyscale(level));
             }
         }
+
         return ret;
     }
 
