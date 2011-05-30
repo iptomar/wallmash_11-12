@@ -99,11 +99,13 @@ public class index extends javax.swing.JFrame {
         btReApply = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         cbGrey = new javax.swing.JCheckBox();
+        tresholdTxt = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pImagem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pImagem.setLayout(new java.awt.GridLayout());
+        pImagem.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Menu"));
 
@@ -121,7 +123,7 @@ public class index extends javax.swing.JFrame {
         txtMask.setText("-1 -1 -1\n0 0 0\n1 1 1\n");
         jScrollPane1.setViewportView(txtMask);
 
-        cbOptions.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default", "Smoothing", "Sharpening", "Raised", "Motion-blur", "Edge Detection" }));
+        cbOptions.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default filter", "Smoothing", "Sharpening", "Raised", "Motion-blur", "Edge Detection" }));
         cbOptions.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbOptionsItemStateChanged(evt);
@@ -149,7 +151,19 @@ public class index extends javax.swing.JFrame {
             }
         });
 
-        cbGrey.setText("Colored?");
+        cbGrey.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cbGrey.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        cbGrey.setLabel("Colored result?");
+
+        tresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tresholdTxt.setText("255");
+        tresholdTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tresholdTxtActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Treshold");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -158,15 +172,19 @@ public class index extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbGrey, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btLoadImg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btSaveImg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(cbOptions, 0, 119, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btApply, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btReApply, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(btSaveImg, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(btLoadImg, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE))
+                    .addComponent(cbGrey, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(cbOptions, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, 0, 0, Short.MAX_VALUE)
+                    .addComponent(btApply, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(btReApply, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,7 +193,11 @@ public class index extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btSaveImg)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(tresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbGrey)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -186,7 +208,7 @@ public class index extends javax.swing.JFrame {
                 .addComponent(btApply)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btReApply)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -204,10 +226,10 @@ public class index extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pImagem, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -236,6 +258,7 @@ public class index extends javax.swing.JFrame {
             readMask();
             FilterEdge detector = new FilterEdge(cloneImage(imagemOriginal), mask);
             detector.setCheckColor(cbGrey.isSelected());
+            detector.setTreshold(Integer.parseInt(tresholdTxt.getText()));
             detector.start();
             imagemEdge = detector.getEdgeImg();
             insertImage(cloneImage(imagemEdge), pImagem);
@@ -276,6 +299,7 @@ public class index extends javax.swing.JFrame {
             readMask();
             FilterEdge detector = new FilterEdge(cloneImage(imagemEdge), mask);
             detector.setCheckColor(cbGrey.isSelected());
+            detector.setTreshold(Integer.parseInt(tresholdTxt.getText()));
             detector.start();          
             imagemEdge = detector.getEdgeImg();
             insertImage(cloneImage(imagemEdge), pImagem);
@@ -283,6 +307,14 @@ public class index extends javax.swing.JFrame {
         } catch (IOException ex) {
         }
     }//GEN-LAST:event_btReApplyActionPerformed
+
+    private void tresholdTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tresholdTxtActionPerformed
+        if (Integer.parseInt(tresholdTxt.getText())>255)
+            tresholdTxt.setText("255");
+        else if (Integer.parseInt(tresholdTxt.getText())<0)
+            tresholdTxt.setText("0");
+        
+    }//GEN-LAST:event_tresholdTxtActionPerformed
 
     /**
      * @param args the command line arguments
@@ -302,10 +334,12 @@ public class index extends javax.swing.JFrame {
     private javax.swing.JButton btSaveImg;
     private javax.swing.JCheckBox cbGrey;
     private javax.swing.JComboBox cbOptions;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel pImagem;
+    private javax.swing.JTextField tresholdTxt;
     private javax.swing.JTextArea txtMask;
     // End of variables declaration//GEN-END:variables
 }

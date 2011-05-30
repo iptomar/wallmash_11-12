@@ -16,6 +16,7 @@ public class FilterEdge {
     private double[][] maskx;
     private double[][] masky;
     private boolean checkColor = true;
+    private int treshold = 76;
 
     public FilterEdge(BufferedImage img, double[][] mask) {
         this.img = img;
@@ -95,7 +96,7 @@ public class FilterEdge {
     }
 
     public int level_to_greyscale(int level) {
-        if (level >= 76) {
+        if (level >= treshold) {
             level = 255;
         } else {
             level = 0;
@@ -139,68 +140,70 @@ public class FilterEdge {
             auxWy += 1;
         }
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int level = 255;
-                int rlevel = 0;
-                int glevel = 0;
-                int blevel = 0;
+        if (checkColor) {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int rlevel = 0, glevel = 0, blevel = 0;
+                    int rX = 0, gX = 0, bX = 0;
+                    int rY = 0, gY = 0, bY = 0;
 
-                int sumX = 0;
-                int rX = 0;
-                int gX = 0;
-                int bX = 0;
-//                System.out.println("\n\n\nSUMX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                for (int yy = 0, mH = auxHx; yy < maskx.length; yy++, mH++) {
-//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
-                    if (y + mH >= 0 && y + mH < height) {
-//                        System.out.println(" FEZ");
-                        for (int xx = 0, mW = auxWx; xx < maskx[0].length; xx++, mW++) {
-//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
-                            if (x + mW >= 0 && x + mW < width) {
-//                                System.out.println(" FEZ");
-                                if (checkColor) {
+                    for (int yy = 0, mH = auxHx; yy < maskx.length; yy++, mH++) {
+                        if (y + mH >= 0 && y + mH < height) {
+                            for (int xx = 0, mW = auxWx; xx < maskx[0].length; xx++, mW++) {
+                                if (x + mW >= 0 && x + mW < width) {
                                     rX += rgb_to_r(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
                                     gX += rgb_to_g(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
                                     bX += rgb_to_b(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                } else {
+                                }
+                            }
+                        }
+                    }
+
+                    for (int yy = 0, mH = auxHy; yy < masky.length; yy++, mH++) {
+                        if (y + mH >= 0 && y + mH < height) {
+                            for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
+                                if (x + mW >= 0 && x + mW < width) {
+                                    rY += rgb_to_r(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
+                                    gY += rgb_to_g(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
+                                    bY += rgb_to_b(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
+                                }
+                            }
+                        }
+                    }
+
+                    rlevel = Math.abs(rX) + Math.abs(rY);
+                    glevel = Math.abs(gX) + Math.abs(gY);
+                    blevel = Math.abs(bX) + Math.abs(bY);
+                    ret.setRGB(x, y, r_g_b_to_rgb(rlevel, glevel, blevel));
+                }
+            }
+            
+        } else {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int level = 255;
+                    int sumX = 0;
+                    for (int yy = 0, mH = auxHx; yy < maskx.length; yy++, mH++) {
+                        if (y + mH >= 0 && y + mH < height) {
+                            for (int xx = 0, mW = auxWx; xx < maskx[0].length; xx++, mW++) {
+                                if (x + mW >= 0 && x + mW < width) {
                                     sumX += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
                                 }
                             }
                         }
                     }
-                }
 
-                int sumY = 0;
-                int rY = 0;
-                int gY = 0;
-                int bY = 0;
-//                System.out.println("\n\n\nSUMY YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-                for (int yy = 0, mH = auxHy; yy < masky.length; yy++, mH++) {
-//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
-                    if (y + mH >= 0 && y + mH < height) {
-//                        System.out.println(" FEZ");
-                        for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
-//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
-                            if (x + mW >= 0 && x + mW < width) {
-//                                System.out.println(" FEZ");
-                                if (checkColor) {
-                                    rY += rgb_to_r(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                    gY += rgb_to_g(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                    bY += rgb_to_b(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                } else {
+                    int sumY = 0;
+                    for (int yy = 0, mH = auxHy; yy < masky.length; yy++, mH++) {
+                        if (y + mH >= 0 && y + mH < height) {
+                            for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
+                                if (x + mW >= 0 && x + mW < width) {
                                     sumY += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
                                 }
                             }
                         }
                     }
-                }
-                if (checkColor) {
-                    rlevel = Math.abs(rX) + Math.abs(rY);
-                    glevel = Math.abs(gX) + Math.abs(gY);
-                    blevel = Math.abs(bX) + Math.abs(bY);
-                    ret.setRGB(x, y, r_g_b_to_rgb(rlevel, glevel, blevel));
-                } else {
+
                     level = Math.abs(sumX) + Math.abs(sumY);
                     if (level < 0) {
                         level = 0;
@@ -211,6 +214,7 @@ public class FilterEdge {
                 }
             }
         }
+
         return ret;
     }
 
@@ -226,5 +230,12 @@ public class FilterEdge {
      */
     public void setCheckColor(boolean checkColor) {
         this.checkColor = checkColor;
+    }
+
+    /**
+     * @param treshold the treshold to set
+     */
+    public void setTreshold(int treshold) {
+        this.treshold = treshold;
     }
 }
