@@ -163,9 +163,9 @@ public class FilterEdge {
                         if (y + mH >= 0 && y + mH < height) {
                             for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
                                 if (x + mW >= 0 && x + mW < width) {
-                                    rY += rgb_to_r(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                    gY += rgb_to_g(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
-                                    bY += rgb_to_b(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
+                                    rY += rgb_to_r(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
+                                    gY += rgb_to_g(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
+                                    bY += rgb_to_b(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
                                 }
                             }
                         }
