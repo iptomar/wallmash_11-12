@@ -15,12 +15,13 @@ public class FilterEdge {
     private BufferedImage edgeImg;
     private double[][] maskx;
     private double[][] masky;
-    private int[][] sobelx = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
-    private int[][] sobely = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};
+    private int treshold=76;
 
-    public FilterEdge(BufferedImage img, double[][] mask) {
+    public FilterEdge(BufferedImage img, double[][] mask, int tresh) {
         this.img = img;
         this.maskx = mask;
+        this.treshold=tresh;
+
     }
 
     public void start() {
@@ -48,25 +49,25 @@ public class FilterEdge {
     }
 
     public int lum(int r, int g, int b) {
-        return (r + r + r + b + g + g + g + g) >> 3;
+        return (r + b + g ) >> 3;
     }
 
     public int rgb_to_luminance(int rgb) {
         int r = (rgb & 0xff0000) >> 16;
         int g = (rgb & 0xff00) >> 8;
         int b = (rgb & 0xff);
-        //System.out.println(r + ", " + g + ", " + b);
-        //return lum(r, g, b);
+//        System.out.println(r + ", " + g + ", " + b);
+        return lum(r, g, b);
         //standard greyscale conversion
-        return (int) (.56 * g + .33 * r + .11 * b);
+        //return (int) (.56 * g + .33 * r + .11 * b);
     }
 
     public int level_to_greyscale(int level) {
-        if (level >= 76) {
-            level = 255;
-        } else {
-            level = 0;
-        }
+//        if (level >= treshold) {
+//            level = 255;
+//        } else {
+//            level = 0;
+//        }
         return (level << 16) | (level << 8) | level;
     }
 
@@ -111,15 +112,10 @@ public class FilterEdge {
                 int level = 255;
 
                 int sumX = 0;
-//                System.out.println("\n\n\nSUMX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 for (int yy = 0, mH = auxHx; yy < maskx.length; yy++, mH++) {
-//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
                     if (y + mH >= 0 && y + mH < height) {
-//                        System.out.println(" FEZ");
                         for (int xx = 0, mW = auxWx; xx < maskx[0].length; xx++, mW++) {
-//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
                             if (x + mW >= 0 && x + mW < width) {
-//                                System.out.println(" FEZ");
                                 sumX += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * maskx[yy][xx];
                             }
                         }
@@ -127,21 +123,16 @@ public class FilterEdge {
                 }
 
                 int sumY = 0;
-//                System.out.println("\n\n\nSUMY YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
                 for (int yy = 0, mH = auxHy; yy < masky.length; yy++, mH++) {
-//                    System.out.print("\nyy / mH / y+mH = " + yy +" / "+ mH +" / "+ (y + mH) + "Faz? " + (y + mH >= 0 && y + mH < height));
                     if (y + mH >= 0 && y + mH < height) {
-//                        System.out.println(" FEZ");
                         for (int xx = 0, mW = auxWy; xx < masky[0].length; xx++, mW++) {
-//                            System.out.print("\nxx / mW / x+mW = " + xx +" / "+ mW +" / "+ (x + mW) + "Faz? " + (x + mW >= 0 && x + mW < width));
                             if (x + mW >= 0 && x + mW < width) {
-//                                System.out.println(" FEZ");
                                 sumY += rgb_to_luminance(image.getRGB(x + mW, y + mH)) * masky[yy][xx];
                             }
                         }
                     }
                 }
-
+                
                 level = Math.abs(sumX) + Math.abs(sumY);
                 if (level < 0) {
                     level = 0;

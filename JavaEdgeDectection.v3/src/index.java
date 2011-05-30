@@ -1,18 +1,9 @@
 
-import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.awt.image.MemoryImageSource;
-import java.awt.image.PixelGrabber;
 import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -42,7 +33,7 @@ public class index extends javax.swing.JFrame {
     private File Fileimg;
     private double[] array_3x3;
     private BufferedImage imagemOriginal;
-    private BufferedImage imagemPanel;
+    private BufferedImage imagemEdge;
     private double[][] mask;
     private float[] k_mask;
 
@@ -51,27 +42,10 @@ public class index extends javax.swing.JFrame {
         initComponents();
     }
 
-    private void getMatrix() {
+    public BufferedImage cloneImage(BufferedImage image) {
+        return new BufferedImage(image.getColorModel(), image.copyData(null), image.isAlphaPremultiplied(), null);
     }
-
-    private BufferedImage callSobel(BufferedImage img) {
-        BufferedImage edges = null;
-        try {
-            //create the detector
-            SobelEdgeDetector detector = new SobelEdgeDetector();
-            detector.setArray3x3(k_mask);
-            //apply it to an image
-            detector.setSourceImage(img);
-            detector.process();
-            edges = detector.getedgesImage();
-            imagemPanel = edges;
-            ImageIO.write(edges, "PNG", new File("SobelEdge.png"));
-        } catch (Exception ex) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return edges;
-    }
-
+    
     private BufferedImage callCanny(BufferedImage img) {
         BufferedImage edges = null;
         try {
@@ -84,42 +58,8 @@ public class index extends javax.swing.JFrame {
             detector.setSourceImage(img);
             detector.process();
             edges = detector.getEdgesImage();
-            imagemPanel = edges;
+            imagemEdge = edges;
             ImageIO.write(edges, "PNG", new File("CannyEdge.png"));
-        } catch (Exception ex) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return edges;
-    }
-
-    private BufferedImage callRoberts(BufferedImage img) {
-        BufferedImage edges = null;
-        try {
-            //create the detector
-            RobertsEdgeDectector detector = new RobertsEdgeDectector();
-            //apply it to an image
-            detector.setSourceImage(img);
-            detector.process();
-            edges = detector.getedgesImage();
-            imagemPanel = edges;
-            ImageIO.write(edges, "PNG", new File("RobertsEdge.png"));
-        } catch (Exception ex) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return edges;
-    }
-
-    private BufferedImage callPrewitt(BufferedImage img) {
-        BufferedImage edges = null;
-        try {
-            //create the detector
-            PrewittEdgeDectection detector = new PrewittEdgeDectection();
-            //apply it to an image
-            detector.setSourceImage(img);
-            detector.process();
-            edges = detector.getedgesImage();
-            imagemPanel = edges;
-            ImageIO.write(edges, "PNG", new File("PrewittEdge.png"));
         } catch (Exception ex) {
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -155,19 +95,15 @@ public class index extends javax.swing.JFrame {
         btLoadImg = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         btSaveImg = new javax.swing.JButton();
-        btSobel = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
-        btCombine = new javax.swing.JButton();
-        btRoberts = new javax.swing.JButton();
-        btPrewitt = new javax.swing.JButton();
-        cbOptions = new javax.swing.JComboBox();
         cbGrey = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        tresholdSld = new javax.swing.JSlider();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMask = new javax.swing.JTextArea();
-        btReadMask = new javax.swing.JToggleButton();
-        jButton1 = new javax.swing.JButton();
+        cbOptions = new javax.swing.JComboBox();
+        treshTxt = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -202,70 +138,21 @@ public class index extends javax.swing.JFrame {
             }
         });
 
-        btSobel.setText("Sobel");
-        btSobel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btSobelActionPerformed(evt);
-            }
-        });
-
-        btCombine.setText("not working");
-        btCombine.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCombineActionPerformed(evt);
-            }
-        });
-
-        btRoberts.setText("Roberts");
-        btRoberts.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btRobertsActionPerformed(evt);
-            }
-        });
-
-        btPrewitt.setText("Prewitt");
-        btPrewitt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btPrewittActionPerformed(evt);
-            }
-        });
-
-        cbOptions.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default", "Smoothing", "Sharpening", "Raised", "Motion-blur", "Edge Detection" }));
-        cbOptions.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbOptionsItemStateChanged(evt);
-            }
-        });
-
         cbGrey.setText("Colored?");
-
-        txtMask.setColumns(12);
-        txtMask.setFont(new java.awt.Font("Courier New", 0, 14));
-        txtMask.setLineWrap(true);
-        txtMask.setRows(1);
-        txtMask.setText("-1 -1 -1\n0 0 0\n1 1 1\n");
-        jScrollPane1.setViewportView(txtMask);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btLoadImg, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btSaveImg, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btCanny, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btSobel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btRoberts, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btPrewitt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(btCombine, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(cbGrey, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbOptions, javax.swing.GroupLayout.Alignment.LEADING, 0, 106, Short.MAX_VALUE))
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbGrey)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(btLoadImg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(btSaveImg, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(btCanny, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -275,33 +162,15 @@ public class index extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btSaveImg)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btCanny)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btSobel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btRoberts)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btPrewitt)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btCombine)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(93, 93, 93)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbGrey)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(179, Short.MAX_VALUE))
         );
-
-        btReadMask.setText("read Mask");
-        btReadMask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btReadMaskActionPerformed(evt);
-            }
-        });
 
         jButton1.setText("apply mask");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -310,17 +179,43 @@ public class index extends javax.swing.JFrame {
             }
         });
 
+        tresholdSld.setMaximum(255);
+        tresholdSld.setMinorTickSpacing(1);
+        tresholdSld.setOrientation(javax.swing.JSlider.VERTICAL);
+        tresholdSld.setPaintTicks(true);
+        tresholdSld.setToolTipText("Treshold");
+        tresholdSld.setValue(75);
+        tresholdSld.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tresholdSldStateChanged(evt);
+            }
+        });
+
+        txtMask.setColumns(12);
+        txtMask.setFont(new java.awt.Font("Courier New", 0, 14));
+        txtMask.setLineWrap(true);
+        txtMask.setRows(1);
+        txtMask.setText("-1 -1 -1\n0 0 0\n1 1 1\n");
+        jScrollPane1.setViewportView(txtMask);
+
+        cbOptions.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default", "Smoothing", "Sharpening", "Raised", "Motion-blur", "Edge Detection" }));
+        cbOptions.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbOptionsItemStateChanged(evt);
+            }
+        });
+
+        treshTxt.setText("75");
+        treshTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                treshTxtActionPerformed(evt);
+            }
+        });
+
         jButton2.setText("re-apply mask");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("jButton3");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
             }
         });
 
@@ -335,10 +230,14 @@ public class index extends javax.swing.JFrame {
                 .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btReadMask, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-                    .addComponent(jButton3))
+                    .addComponent(tresholdSld, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(treshTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                    .addComponent(cbOptions, 0, 99, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                    .addComponent(jButton2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -346,19 +245,27 @@ public class index extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(btReadMask)
-                        .addGap(36, 36, 36)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addGap(60, 60, 60)
-                        .addComponent(jButton3)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(treshTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(cbOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tresholdSld, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
+
+        treshTxt.getAccessibleContext().setAccessibleName("treshTxt");
 
         pack();
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -399,129 +306,13 @@ public class index extends javax.swing.JFrame {
         int returnVal = chooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                ImageIO.write(imagemPanel, "PNG", chooser.getSelectedFile());
+                ImageIO.write(imagemEdge, "PNG", chooser.getSelectedFile());
             } catch (Exception ex) {
             }
         }
     }//GEN-LAST:event_btSaveImgActionPerformed
 
-    private void btSobelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSobelActionPerformed
-        readMask();
-        insertImage(callSobel(deepCopy(imagemOriginal)), pImagem);
-    }//GEN-LAST:event_btSobelActionPerformed
-
-    private void btCombineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCombineActionPerformed
-        try {
-//            // load source images
-//            BufferedImage overlay = ImageIO.read(new File("SobelEdge.png"));
-//            // create the new image, canvas size is the max. of both image sizes
-//            int w = Math.max(image.getWidth(), overlay.getWidth());
-//            int h = Math.max(image.getHeight(), overlay.getHeight());
-//            BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-//            // paint both images, preserving the alpha channels
-//            Graphics g = combined.getGraphics();
-//            g.drawImage(image, 0, 0, null);
-//            g.drawImage(overlay, 0, 0, null);
-//            // Save as new image
-//            ImageIO.write(combined, "PNG", new File("combined.png"));
-
-
-
-            BufferedImage image = ImageIO.read(new File("CannyEdge.png"));
-            int[] ori = new int[image.getWidth() * image.getHeight()];
-            PixelGrabber pg = new PixelGrabber(image, 0, 0, image.getWidth(), image.getHeight(), ori, 0, image.getWidth());
-            try {
-                pg.grabPixels();
-            } catch (Exception e) {
-                System.out.println("PixelGrabber failed");
-            }
-            BufferedImage image2 = ImageIO.read(new File("SobelEdge.png"));
-            int[] ori2 = new int[image2.getWidth() * image2.getHeight()];
-            PixelGrabber pg2 = new PixelGrabber(image2, 0, 0, image2.getWidth(), image2.getHeight(), ori2, 0, image2.getWidth());
-            try {
-                pg2.grabPixels();
-            } catch (Exception e) {
-                System.out.println("PixelGrabber failed");
-            }
-
-
-            int w = Math.max(image.getWidth(), image2.getWidth());
-            int h = Math.max(image.getHeight(), image2.getHeight());
-
-            int[] pixels = new int[w * h];
-            for (int j = 0; j < pixels.length; j++) {
-                if ((ori[j] & 0x00FFFFFF) != 0) {  //nao é preto, é branco
-                    pixels[j] = ori[j];
-                } else if ((ori2[j] & 0x00FFFFFF) != 0) { //nao é preto, é branco
-                    pixels[j] = ori2[j];
-                }
-            }
-            MemoryImageSource newImage = new MemoryImageSource(w, h, pixels, 0, w);
-            Canvas c = new Canvas();
-            Image finalImage = c.createImage(newImage);
-            //BufferedImage combine = combine.createGraphics();
-            imagemPanel.getGraphics().drawImage(finalImage, 0, 0, null);
-            insertImage(imagemPanel, pImagem);
-
-
-            ImageIO.write(imagemPanel, "PNG", new File("combined.png"));
-        } catch (Exception ex) {
-        }
-
-    }//GEN-LAST:event_btCombineActionPerformed
-
-    private void btRobertsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRobertsActionPerformed
-        readMask();
-        insertImage(callRoberts(deepCopy(imagemOriginal)), pImagem);
-    }//GEN-LAST:event_btRobertsActionPerformed
-
-    private void btPrewittActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPrewittActionPerformed
-        readMask();
-        insertImage(callPrewitt(deepCopy(imagemOriginal)), pImagem);
-    }//GEN-LAST:event_btPrewittActionPerformed
-
-    private void btReadMaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReadMaskActionPerformed
-        String txt = txtMask.getText();
-        String[] line = txt.split("\n");
-        int lines = line.length;
-        mask = new double[lines][];
-
-        for (int y = 0; y < lines; y++) {
-            String[] elem = line[y].split(" ");
-            mask[y] = new double[elem.length];
-            for (int x = 0; x < elem.length; x++) {
-                mask[y][x] = Double.parseDouble(elem[x]);
-            }
-        }
-        for (int y = 0; y < mask.length; y++) {
-            System.out.println("");
-            for (int x = 0; x < mask[y].length; x++) {
-                System.out.print(mask[y][x] + "\t");
-            }
-        }
-    }//GEN-LAST:event_btReadMaskActionPerformed
-
-    private int[] convertToByte(BufferedImage img) {
-        int[] imgbyteArray = null;
-        try {
-            // write it to byte array in-memory (jpg format)
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            ImageIO.write(img, "jpg", b);
-            // do whatever with the array...
-            byte[] jpgByteArray = b.toByteArray();
-            // convert it to a String with 0s and 1s
-            imgbyteArray = new int[jpgByteArray.length];
-            for (int i = 0; i < imgbyteArray.length; i++) {
-                imgbyteArray[i] = Integer.parseInt(Integer.toBinaryString(jpgByteArray[i] & 0xFF));
-            }
-//            for (int i : imgbyteArray) {
-//                System.out.print(i);
-//            }
-        } catch (IOException ex) {
-        }
-        return imgbyteArray;
-    }
-
+    
     private void readMask() {
         String str = "";
         txtMask.setText(txtMask.getText().trim());
@@ -547,99 +338,18 @@ public class index extends javax.swing.JFrame {
         }
     }
 
-    private void setMask() {
-        readMask();
-        if (cbGrey.isSelected()) {
-            BufferedImage buff = new BufferedImage(imagemOriginal.getWidth(), imagemOriginal.getHeight(), imagemOriginal.getType());
-            Kernel kernel = new Kernel(mask.length, mask[0].length, k_mask);
-            ConvolveOp op = new ConvolveOp(kernel);
-            op.filter(imagemOriginal, buff);
-            imagemPanel = buff;
-            insertImage(deepCopy(buff), pImagem);
-        } else {
-            //converte a imagem para preto e branco
-            BufferedImage image = new BufferedImage(imagemOriginal.getWidth(), imagemOriginal.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-            Graphics g = image.getGraphics();
-            g.drawImage(imagemOriginal, 0, 0, imagemOriginal.getWidth(), imagemOriginal.getHeight(), null);
-            g.dispose();
-
-            BufferedImage buff = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-            Kernel kernel = new Kernel(mask.length, mask[0].length, k_mask);
-            ConvolveOp op = new ConvolveOp(kernel);
-            op.filter(image, buff);
-            imagemPanel = buff;
-            insertImage(deepCopy(buff), pImagem);
-        }
-    }
-
-    private void applyMask(BufferedImage bi, BufferedImage bi2, int py, int px) {
-        readMask();
-        int cx = mask[0].length / 2;
-        int cy = mask.length / 2;
-        //  System.out.print("\n PIXEL " + px + " : " + py + " : ");
-        int sum = 0;
-
-
-
-        int[] colorsf = new int[3];
-        for (int i = 0; i < 1; i++) {
-            for (int y = -cy; y <= cy; y++) {
-                for (int x = -cx; x <= cx; x++) {
-
-                    //garantir que o pixel existe
-                    if (px + x < bi.getWidth() && px + x >= 0 && py + y < bi.getHeight() && py + y >= 0) {
-                        int pixel = bi.getRGB(px + x, py + y);
-                        int[] colors = {0xff & (pixel >> 16), 0xff & (pixel >> 8), 0xff & (pixel)};
-
-                        //  System.out.print(" ("+(y+py) + " " + (x+px)+")");
-
-                        colorsf[i] += colors[i] * mask[y + cy][x + cx];
-                        if (colorsf[i] <= 0) {
-                            colorsf[i] = 0;
-                        } else if (colorsf[i] >= 255) {
-                            colorsf[i] = 255;
-                        }
-                    }
-                }
-            }
-        }
-
-        //int r = 0xff & (sum >> 16);
-        //int g = 0xff & (sum >> 8);
-        //int b = 0xff & (sum);
-        //System.out.println(colorsf[0]);
-        //colocar na edge
-        bi2.setRGB(px, py, ((colorsf[0] << 16) | (colorsf[0] << 8) | colorsf[0]));
-    }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-//        BufferedImage imagemDestino = deepCopy(imagemOriginal);
-//        try {
-//            for (int i = 0; i < imagemOriginal.getHeight(); i++) {
-//                for (int j = 0; j < imagemOriginal.getWidth(); j++) {
-//                    applyMask(imagemOriginal, imagemDestino, i, j);
-//                }
-//            }
-//            ImageIO.write(imagemDestino, "JPG", new File("edgeteste.jpg"));
-//            // insertImage(imagemOriginal, pImagem);
-//        } catch (Exception ex) {
-//            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        //setMask();
+
         try {
             readMask();
             BufferedImage imagemDestino;
-            FilterEdge detector = new FilterEdge(imagemOriginal, mask);
+            FilterEdge detector = new FilterEdge(cloneImage(imagemOriginal), mask, tresholdSld.getValue());
             detector.start();
             imagemDestino = detector.getEdgeImg();
-            insertImage(imagemDestino, pImagem);
+            insertImage(cloneImage(imagemEdge), pImagem);
             ImageIO.write(imagemDestino, "JPG", new File("egde1111111111111111111111111111.jpg"));
         } catch (IOException ex) {
         }
-
-
-
-
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cbOptionsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbOptionsItemStateChanged
@@ -665,32 +375,33 @@ public class index extends javax.swing.JFrame {
     }//GEN-LAST:event_pImagemMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        readMask();
-        BufferedImage buff = new BufferedImage(imagemPanel.getWidth(), imagemPanel.getHeight(), imagemPanel.getType());
-        Kernel kernel = new Kernel(3, 3, k_mask);
-        ConvolveOp op = new ConvolveOp(kernel);
-        op.filter(imagemPanel, buff);
-        insertImage(buff, pImagem);
+        try {
+            readMask();
+            FilterEdge detector = new FilterEdge(cloneImage(imagemEdge), mask,tresholdSld.getValue());
+            detector.start();
+            imagemEdge = detector.getEdgeImg();
+            insertImage(cloneImage(imagemEdge), pImagem);
+            ImageIO.write(imagemEdge, "JPG", new File("egde1111111111111111111111111111.jpg"));
+        } catch (IOException ex) {
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        readMask();
-        BufferedImage imagemDestino;
-        FilterEdge detector = new FilterEdge(imagemOriginal, mask);
-        detector.start();
-        imagemDestino = detector.getEdgeImg();
-        byte[] pixels = (byte[]) imagemDestino.getData().getDataElements(0, 0, imagemDestino.getWidth(), imagemDestino.getHeight(), null);
-        int[] data = new int[pixels.length];
-        for (int i = 0; i < pixels.length; i++) {
-            data[i] = (pixels[i] & 0xff);
-
-            //data[i] = Integer.parseInt(Integer.toBinaryString(pixels[i] & 0xFF));
-            //System.out.print(Integer.toBinaryString(data[i]));
+    private void treshTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_treshTxtActionPerformed
+        if (Integer.parseInt(treshTxt.getText()) > 255) {
+            tresholdSld.setValue(255);
+        } else if (Integer.parseInt(treshTxt.getText()) < 0) {
+            tresholdSld.setValue(0);
+        } else {
+            tresholdSld.setValue(Integer.parseInt(treshTxt.getText()));
         }
-        BufferedImage edgesImage = new BufferedImage(imagemDestino.getWidth(), imagemDestino.getHeight(), BufferedImage.TYPE_INT_RGB);
-        edgesImage.getWritableTile(0, 0).setDataElements(0, 0, imagemDestino.getWidth(), imagemDestino.getHeight(), data);
-        insertImage(edgesImage, pImagem);
-    }//GEN-LAST:event_jButton3ActionPerformed
+        
+
+
+    }//GEN-LAST:event_treshTxtActionPerformed
+
+    private void tresholdSldStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tresholdSldStateChanged
+        treshTxt.setText(Integer.toString(tresholdSld.getValue()));
+    }//GEN-LAST:event_tresholdSldStateChanged
 
     /**
      * @param args the command line arguments
@@ -705,23 +416,19 @@ public class index extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btCanny;
-    private javax.swing.JButton btCombine;
     private javax.swing.JButton btLoadImg;
-    private javax.swing.JButton btPrewitt;
-    private javax.swing.JToggleButton btReadMask;
-    private javax.swing.JButton btRoberts;
     private javax.swing.JButton btSaveImg;
-    private javax.swing.JButton btSobel;
     private javax.swing.JCheckBox cbGrey;
     private javax.swing.JComboBox cbOptions;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPanel pImagem;
+    private javax.swing.JTextField treshTxt;
+    private javax.swing.JSlider tresholdSld;
     private javax.swing.JTextArea txtMask;
     // End of variables declaration//GEN-END:variables
 }
