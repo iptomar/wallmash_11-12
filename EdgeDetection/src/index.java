@@ -2,8 +2,6 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -102,6 +100,17 @@ public class index extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         cbRotate = new javax.swing.JCheckBox();
         cbTreshold = new javax.swing.JCheckBox();
+        jPanel2 = new javax.swing.JPanel();
+        btCanny = new javax.swing.JButton();
+        txtLowTresh = new javax.swing.JTextField();
+        txtHighTresh = new javax.swing.JTextField();
+        txtKWidth = new javax.swing.JTextField();
+        txtKRadius = new javax.swing.JTextField();
+        cbNormalize = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -230,6 +239,94 @@ public class index extends javax.swing.JFrame {
                 .addGap(33, 33, 33))
         );
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Canny"));
+
+        btCanny.setText("Apply");
+        btCanny.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCannyActionPerformed(evt);
+            }
+        });
+
+        txtLowTresh.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtLowTresh.setText("0.5");
+        txtLowTresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLowTreshActionPerformed(evt);
+            }
+        });
+
+        txtHighTresh.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtHighTresh.setText("1");
+
+        txtKWidth.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtKWidth.setText("16");
+
+        txtKRadius.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtKRadius.setText("2");
+
+        cbNormalize.setText("Norm. Contrast?");
+
+        jLabel2.setText("Low Treshold");
+
+        jLabel3.setText("High Treshold");
+
+        jLabel4.setText("Kernel Width");
+
+        jLabel5.setText("Kernel Radius");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(cbNormalize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtKRadius, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(txtKWidth, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(txtHighTresh, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(txtLowTresh, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(btCanny, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                .addGap(19, 19, 19))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtLowTresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtHighTresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtKWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtKRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(7, 7, 7)
+                .addComponent(cbNormalize)
+                .addGap(18, 18, 18)
+                .addComponent(btCanny)
+                .addContainerGap(180, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -239,15 +336,18 @@ public class index extends javax.swing.JFrame {
                 .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pImagem, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -341,6 +441,26 @@ public class index extends javax.swing.JFrame {
 
     }//GEN-LAST:event_tresholdTxtActionPerformed
 
+    private void btCannyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCannyActionPerformed
+        Canny detector = new Canny();
+        //adjust its parameters as desired
+        detector.setLowThreshold(new Float(txtLowTresh.getText()));
+        detector.setHighThreshold(new Float(txtHighTresh.getText()));
+        detector.setGaussianKernelWidth(Integer.parseInt(txtKWidth.getText()));
+        detector.setGaussianKernelRadius(new Float(txtKRadius.getText()));
+        detector.setContrastNormalized(cbNormalize.isSelected());
+
+        //apply it to an image
+        detector.setSourceImage(cloneImage(imagemOriginal));
+        detector.process();
+        imagemEdge = detector.getEdgesImage();
+        insertImage(cloneImage(imagemEdge), pImagem);
+    }//GEN-LAST:event_btCannyActionPerformed
+
+    private void txtLowTreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLowTreshActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtLowTreshActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -354,18 +474,29 @@ public class index extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btApply;
+    private javax.swing.JButton btCanny;
     private javax.swing.JButton btLoadImg;
     private javax.swing.JButton btReApply;
     private javax.swing.JButton btSaveImg;
+    private javax.swing.JCheckBox cbNormalize;
     private javax.swing.JComboBox cbOptions;
     private javax.swing.JCheckBox cbRotate;
     private javax.swing.JCheckBox cbTreshold;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel pImagem;
     private javax.swing.JTextField tresholdTxt;
+    private javax.swing.JTextField txtHighTresh;
+    private javax.swing.JTextField txtKRadius;
+    private javax.swing.JTextField txtKWidth;
+    private javax.swing.JTextField txtLowTresh;
     private javax.swing.JTextArea txtMask;
     // End of variables declaration//GEN-END:variables
 }
