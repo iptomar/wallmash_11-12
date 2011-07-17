@@ -2,7 +2,10 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -111,8 +114,6 @@ public class index extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -278,20 +279,6 @@ public class index extends javax.swing.JFrame {
 
         jLabel5.setText("Kernel Radius");
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -317,14 +304,6 @@ public class index extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addComponent(btCanny, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
                 .addGap(19, 19, 19))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(42, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton2)
-                .addContainerGap(42, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -349,11 +328,7 @@ public class index extends javax.swing.JFrame {
                 .addComponent(cbNormalize)
                 .addGap(18, 18, 18)
                 .addComponent(btCanny)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -481,7 +456,11 @@ public class index extends javax.swing.JFrame {
 
         //apply it to an image
         detector.setSourceImage(cloneImage(imagemOriginal));
-        detector.process();
+        try {
+            detector.process();
+        } catch (IOException ex) {
+            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+        }
         imagemEdge = detector.getEdgesImage();
         insertImage(cloneImage(imagemEdge), pImagem);
     }//GEN-LAST:event_btCannyActionPerformed
@@ -489,27 +468,6 @@ public class index extends javax.swing.JFrame {
     private void txtLowTreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLowTreshActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtLowTreshActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Canny detector = new Canny();
-        //adjust its parameters as desired
-        detector.setLowThreshold(new Float(txtLowTresh.getText()));
-        detector.setHighThreshold(new Float(txtHighTresh.getText()));
-        detector.setGaussianKernelWidth(Integer.parseInt(txtKWidth.getText()));
-        detector.setGaussianKernelRadius(new Float(txtKRadius.getText()));
-        detector.setContrastNormalized(cbNormalize.isSelected());
-
-        //apply it to an image
-        detector.setSourceImage(cloneImage(imagemOriginal));
-        detector.process();
-        imagemEdge = detector.getEdgesImage2();
-        insertImage(cloneImage(imagemEdge), pImagem);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
-       
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -532,8 +490,6 @@ public class index extends javax.swing.JFrame {
     private javax.swing.JComboBox cbOptions;
     private javax.swing.JCheckBox cbRotate;
     private javax.swing.JCheckBox cbTreshold;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

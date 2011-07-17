@@ -17,11 +17,9 @@ public class Canny {
     private int width;
     private int picsize;
     private int[] data;
-    private int[] dataAux;
     private int[] magnitude;
     private BufferedImage sourceImage;
     private BufferedImage edgesImage;
-    private BufferedImage edgesImage2;
     private float gaussianKernelRadius;
     private float lowThreshold;
     private float highThreshold;
@@ -121,22 +119,23 @@ public class Canny {
         initArrays();
         //transformar em escala de cinza
         readLuminance();
-        writeImage(dataAux, "1-luminance.png");      
+        writeImage(data, "1-luminance.png");      
         
         //normalizar o histograma
         if (contrastNormalized) {
             normalizeContrast();
-            writeImage(dataAux, "2-normalizedContrast.png");
+            writeImage(data, "2-normalizedContrast.png");
         }
         //encontrar edges e edges por aproximação
         computeGradients(gaussianKernelRadius, gaussianKernelWidth);
+        writeImage(magnitude, "3-magGradients.png");
         //aplicar tresholds
         int low = Math.round(lowThreshold * MAGNITUDE_SCALE);
         int high = Math.round(highThreshold * MAGNITUDE_SCALE);
         performHysteresis(low, high);
-        writeImage(dataAux, "3-hysteresis.png");
+        writeImage(data, "4-hysteresis.png");
         thresholdEdges();
-        writeImage(dataAux, "4-thresholdEdges.png");
+        writeImage(data, "5-thresholdEdges.png");
         writeEdges(data);
        
     }
@@ -145,7 +144,7 @@ public class Canny {
     private void initArrays() {
         if (data == null || picsize != data.length) {
             data = new int[picsize];
-            dataAux = new int[picsize];
+            
             magnitude = new int[picsize];
 
             xConv = new float[picsize];
@@ -155,12 +154,14 @@ public class Canny {
         }
     }
     
+    //guardar imagem num ficheiro
     private void writeImage (int[] pixels, String filename) throws IOException{
+        int[] dataAux = new int[picsize];
         edgesImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
         edgesImage.getWritableTile(0, 0).setDataElements(0, 0, width, height, pixels);
         for (int i=0; i<pixels.length;i++){
-            pixels[i]=(pixels[i]==0) ? 0 : (0xff <<24 |(pixels[i] << 16) | (pixels[i] << 8)  | (pixels[i] << 0));
+            dataAux[i]=(pixels[i]==0) ? 0 : (0xff <<24 |(pixels[i] << 16) | (pixels[i] << 8)  | pixels[i]);
         }
         
         
@@ -168,11 +169,12 @@ public class Canny {
         
         for(int x = 0; x<height; x++)
             for(int y = 0; y<width; y++, i++){
-                edgesImage.setRGB(y, x, pixels[i]);
+                edgesImage.setRGB(y, x, dataAux[i]);
             }
         ImageIO.write(edgesImage, "PNG", new File(filename));
     }
-
+    
+    
     private void computeGradients(float kernelRadius, int kernelWidth) {
         //generate the gaussian convolution masks
         float kernel[] = new float[kernelWidth];
@@ -295,7 +297,6 @@ public class Canny {
     private void performHysteresis(int low, int high) {
         //reiniciar o array data com zeros
         Arrays.fill(data, 0);
-        Arrays.fill(dataAux, 0);
 
         int offset = 0;
         for (int x = 0; x < width; x++) {
@@ -315,7 +316,6 @@ public class Canny {
         int y2 = y1 == height - 1 ? y1 : y1 + 1;
 
         data[i1] = magnitude[i1];
-        dataAux[i1]=data[i1];
         for (int x = x0; x <= x2; x++) {
             for (int y = y0; y <= y2; y++) {
                 int i2 = x + y * width;
@@ -332,7 +332,6 @@ public class Canny {
     private void thresholdEdges() {
         for (int i = 0; i < picsize; i++) {
             data[i] = data[i] > 0 ? -1 : 0xff000000;
-            dataAux[i]=data[i];
         }
     }
 
@@ -357,19 +356,16 @@ public class Canny {
                 int b = p & 0xff;
                 //transformar numa escala de cinza
                 data[i] = luminance(r, g, b);
-                dataAux[i]=data[i];
             }
         } else if (type == BufferedImage.TYPE_BYTE_GRAY) {
             byte[] pixels = (byte[]) sourceImage.getData().getDataElements(0, 0, width, height, null);
             for (int i = 0; i < picsize; i++) {
                 data[i] = (pixels[i] & 0xff);
-                dataAux[i]=data[i];
             }
         } else if (type == BufferedImage.TYPE_USHORT_GRAY) {
             short[] pixels = (short[]) sourceImage.getData().getDataElements(0, 0, width, height, null);
             for (int i = 0; i < picsize; i++) {
                 data[i] = (pixels[i] & 0xffff) / 256;
-                dataAux[i]=data[i];
             }
         } else if (type == BufferedImage.TYPE_3BYTE_BGR) {
             byte[] pixels = (byte[]) sourceImage.getData().getDataElements(0, 0, width, height, null);
@@ -379,7 +375,6 @@ public class Canny {
                 int g = pixels[offset++] & 0xff;
                 int r = pixels[offset++] & 0xff;
                 data[i] = luminance(r, g, b);
-                dataAux[i]=data[i];
             }
         } else {
             throw new IllegalArgumentException("Unsupported image type: " + type);
@@ -406,7 +401,6 @@ public class Canny {
         }
         for (int i = 0; i < data.length; i++) {
             data[i] = remap[data[i]];
-            dataAux[i]=data[i];
         }
     }
 
@@ -414,18 +408,13 @@ public class Canny {
         if (edgesImage == null) {
             edgesImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
-        edgesImage.getWritableTile(0, 0).setDataElements(0, 0, width, height, pixels);
+        edgesImage=sourceImage;
         int i=0;
-        edgesImage2=sourceImage;
         
         for(int x = 0; x<height; x++)
             for(int y = 0; y<width; y++, i++)
                 if(pixels[i]==-1)
-                    edgesImage2.setRGB(y, x, 0);
+                    edgesImage.setRGB(y, x, 0);
                     
-    }
-
-    public BufferedImage getEdgesImage2() {
-        return edgesImage2;
     }
 }
